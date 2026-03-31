@@ -1,0 +1,13 @@
+﻿namespace Flowra.Backend.Domain.Entities
+{
+    public class Expense : BaseEntity
+    {
+        public string Name { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsRecurring { get; set; }
+        public bool IsCreditCard { get; set; }
+        public decimal? MinimumPaymentAmount { get; set; }
+        public bool IsPaid { get; set; }
+    }
+}

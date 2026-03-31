@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/Flowra.Backend.Application/Flowra.Backend.Application.csproj" />
+    <Project Path="src/Core/Flowra.Backend.Domain/Flowra.Backend.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/Flowra.Backend.Infrastructure/Flowra.Backend.Infrastructure.csproj" />
+    <Project Path="src/Infrastructure/Flowra.Backend.Persistence/Flowra.Backend.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="src/Presentation/Flowra.Backend.WebAPI/Flowra.Backend.WebAPI.csproj" />
+  </Folder>
+</Solution>
