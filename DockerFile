@@ -1,0 +1,27 @@
+﻿# 1. AŞAMA: DERLEME
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Tüm katmanların .csproj dosyalarını kopyala (Restore aşaması için)
+COPY ["src/Presentation/Flowra.Backend.WebAPI/Flowra.Backend.WebAPI.csproj", "src/Presentation/Flowra.Backend.WebAPI/"]
+COPY ["src/Core/Flowra.Backend.Application/Flowra.Backend.Application.csproj", "src/Core/Flowra.Backend.Application/"]
+COPY ["src/Core/Flowra.Backend.Domain/Flowra.Backend.Domain.csproj", "src/Core/Flowra.Backend.Domain/"]
+COPY ["src/Infrastructure/Flowra.Backend.Infrastructure/Flowra.Backend.Infrastructure.csproj", "src/Infrastructure/Flowra.Backend.Infrastructure/"]
+COPY ["src/Infrastructure/Flowra.Backend.Persistence/Flowra.Backend.Persistence.csproj", "src/Infrastructure/Flowra.Backend.Persistence/"]
+
+# Ana projeyi restore et (diğerlerini de otomatik çeker)
+RUN dotnet restore "src/Presentation/Flowra.Backend.WebAPI/Flowra.Backend.WebAPI.csproj"
+
+# Tüm kaynak kodları kopyala
+COPY . .
+
+# WebAPI projesini derle
+WORKDIR "/src/src/Presentation/Flowra.Backend.WebAPI"
+RUN dotnet publish "Flowra.Backend.WebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# 2. AŞAMA: ÇALIŞTIRMA
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "Flowra.Backend.WebAPI.dll"]

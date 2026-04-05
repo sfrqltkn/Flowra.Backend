@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flowra.Backend.Application.DTOs.Expense
+﻿namespace Flowra.Backend.Application.DTOs.Expense
 {
     public class CreateExpenseDto
     {

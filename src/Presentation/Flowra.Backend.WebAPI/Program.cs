@@ -17,10 +17,12 @@ builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<ICashRecordService, CashRecordService>(); 
 builder.Services.AddScoped<IAllowanceService, AllowanceService>();
 
+builder.Services.AddHttpClient<IAiAdvisorService, AiAdvisorService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
-        policy => policy.WithOrigins("http://localhost:4200")
+        policy => policy.WithOrigins("http://localhost:4200", "http://localhost:4280")
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
