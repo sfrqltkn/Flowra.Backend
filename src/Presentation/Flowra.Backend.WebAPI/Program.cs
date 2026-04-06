@@ -17,6 +17,11 @@ builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<ICashRecordService, CashRecordService>(); 
 builder.Services.AddScoped<IAllowanceService, AllowanceService>();
 
+builder.Services.AddHttpClient<IFinanceDataService, FinanceDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.collectapi.com/");
+});
+
 builder.Services.AddHttpClient<IAiAdvisorService, AiAdvisorService>();
 
 builder.Services.AddCors(options =>
