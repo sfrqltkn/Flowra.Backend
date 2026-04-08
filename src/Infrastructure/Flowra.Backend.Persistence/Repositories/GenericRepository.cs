@@ -1,6 +1,6 @@
 ﻿using Flowra.Backend.Application.Interfaces.Repositories;
 using Flowra.Backend.Domain.Entities;
-using Flowra.Backend.Persistence.Context;
+using Flowra.Backend.Persistence.Main.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flowra.Backend.Persistence.Repositories

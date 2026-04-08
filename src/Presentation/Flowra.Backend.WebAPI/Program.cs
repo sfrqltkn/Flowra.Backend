@@ -1,14 +1,27 @@
+using Flowra.Backend.Application;
 using Flowra.Backend.Application.Interfaces.Repositories;
 using Flowra.Backend.Application.Interfaces.Services;
 using Flowra.Backend.Application.Services;
-using Flowra.Backend.Persistence.Context;
+using Flowra.Backend.Infrastructure;
+using Flowra.Backend.Persistence;
 using Flowra.Backend.Persistence.Repositories;
+using Flowra.Backend.WebAPI;
+using Flowra.Backend.WebAPI.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<FlowraDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Services
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddPresentationServices(builder.Configuration);
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
@@ -32,18 +45,24 @@ builder.Services.AddCors(options =>
                         .AllowAnyHeader());
 });
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<FlowraDbContext>();
-    db.Database.Migrate();
-}
+
+//
+// MIDDLEWARE PIPELINE
+//
+
+// CorrelationId üretimi (tüm request boyunca kullanýlacak)
+app.UseMiddleware<CorrelationIdMiddleware>();
+// HTTPS redirect
+app.UseHttpsRedirection();
+
+// Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,8 +73,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngularApp");
-
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

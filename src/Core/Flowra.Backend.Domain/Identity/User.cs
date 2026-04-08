@@ -1,0 +1,14 @@
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Flowra.Backend.Domain.Identity
+{
+    public class User : IdentityUser<int>
+    {
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public bool IsActive { get; set; } = true;
+        public bool NeedPasswordReset { get; set; } = true;
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    }
+}

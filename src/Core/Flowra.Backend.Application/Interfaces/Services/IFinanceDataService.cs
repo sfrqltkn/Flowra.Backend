@@ -1,7 +1,4 @@
 ﻿using Flowra.Backend.Application.DTOs.FinanceData;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Flowra.Backend.Application.Interfaces.Services
 {
