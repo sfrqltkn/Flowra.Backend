@@ -13,7 +13,6 @@ namespace Flowra.Backend.Persistence.Main
         {
             var connectionString =
                 configuration.GetConnectionString("PostgreSQL");
-
             // Interceptor DI kaydı
             services.AddScoped<AuditTrackableInterceptor>();
 

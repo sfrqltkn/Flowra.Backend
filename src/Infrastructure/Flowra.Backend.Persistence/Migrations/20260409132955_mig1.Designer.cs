@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Flowra.Backend.Persistence.Migrations
 {
     [DbContext(typeof(FlowraDbContext))]
-    [Migration("20260408190003_mig1")]
+    [Migration("20260409132955_mig1")]
     partial class mig1
     {
         /// <inheritdoc />
@@ -350,9 +350,7 @@ namespace Flowra.Backend.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");

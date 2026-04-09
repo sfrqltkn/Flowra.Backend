@@ -7,7 +7,6 @@ using Flowra.Backend.Persistence;
 using Flowra.Backend.Persistence.Repositories;
 using Flowra.Backend.WebAPI;
 using Flowra.Backend.WebAPI.Middlewares;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,20 +21,6 @@ builder.Services.AddPresentationServices(builder.Configuration);
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
-
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IExpenseService, ExpenseService>();
-builder.Services.AddScoped<IIncomeService, IncomeService>();     
-builder.Services.AddScoped<IAssetService, AssetService>();       
-builder.Services.AddScoped<ICashRecordService, CashRecordService>(); 
-builder.Services.AddScoped<IAllowanceService, AllowanceService>();
-
-builder.Services.AddHttpClient<IFinanceDataService, FinanceDataService>(client =>
-{
-    client.BaseAddress = new Uri("https://api.collectapi.com/");
-});
-
-builder.Services.AddHttpClient<IAiAdvisorService, AiAdvisorService>();
 
 builder.Services.AddCors(options =>
 {

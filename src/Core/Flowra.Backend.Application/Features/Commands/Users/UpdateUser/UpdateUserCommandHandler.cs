@@ -22,20 +22,19 @@ namespace Flowra.Backend.Application.Features.Commands.Users.UpdateUser
             if (user is null)
                 throw new NotFoundException("Güncellenmek istenen kullanıcı sistemde bulunamadı.");
 
-            if (user.Email != request.Email)
-            {
-                var emailExists = await _userService.FindByEmailAsync(request.Email);
-                if (emailExists is not null)
-                    throw new ConflictException("Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.", nameof(request.Email));
-            }
+            //if (user.Email != request.Email)
+            //{
+            //    var emailExists = await _userService.FindByEmailAsync(request.Email);
+            //    if (emailExists is not null)
+            //        throw new ConflictException("Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.", nameof(request.Email));
+            //}
 
-            if (user.UserName != request.UserName)
-            {
-                var userNameExists = await _userService.FindByNameAsync(request.UserName);
-                if (userNameExists is not null)
-                    throw new ConflictException("Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.", nameof(request.UserName));
-
-            }
+            //if (user.UserName != request.UserName)
+            //{
+            //    var userNameExists = await _userService.FindByNameAsync(request.UserName);
+            //    if (userNameExists is not null)
+            //        throw new ConflictException("Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.", nameof(request.UserName));
+            //}
 
             user.UserName = request.UserName;
             user.Email = request.Email;
