@@ -20,7 +20,7 @@ namespace Flowra.Backend.Application.Features.Queries.UserRoles.GetAllUserRoles
             var userRoles = await _userRolesRepository.GetAllUserRolesAsync(cancellationToken);
 
             var response = userRoles.ToList();
-            return ResultResponse.Success(response, Response.Common.OperationSuccess);
+            return ResultResponse.Success(response, ResponseMessages.Common.OperationSuccess);
         }
     }
 }

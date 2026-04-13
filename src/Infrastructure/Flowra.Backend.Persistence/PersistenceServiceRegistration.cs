@@ -1,12 +1,12 @@
-﻿using Flowra.Backend.Persistence.Main.Repositories;
-using Flowra.Backend.Application.Abstractions.Persistence;
+﻿using Flowra.Backend.Application.Abstractions.Persistence;
 using Flowra.Backend.Application.Abstractions.Persistence.Repositories.Identity;
-using Flowra.Backend.Application.Interfaces.Repositories;
+using Flowra.Backend.Application.Persistence.Repositories;
 using Flowra.Backend.Persistence.Main;
 using Flowra.Backend.Persistence.Main.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Flowra.Backend.Persistence.Main.Repositories.Identity;
+using Flowra.Backend.Persistence.Repositories;
+using Flowra.Backend.Persistence.Repositories.Identity;
 
 namespace Flowra.Backend.Persistence
 {

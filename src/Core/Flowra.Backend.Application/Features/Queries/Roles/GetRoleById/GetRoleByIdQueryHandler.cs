@@ -25,7 +25,7 @@ namespace Flowra.Backend.Application.Features.Queries.Roles.GetRoleById
 
             var roleDto = new RoleDto { Id = role.Id, Name = role.Name! };
 
-            return ResultResponse.Success(roleDto, Response.Common.OperationSuccess);
+            return ResultResponse.Success(roleDto, ResponseMessages.Common.OperationSuccess);
         }
     }
 }

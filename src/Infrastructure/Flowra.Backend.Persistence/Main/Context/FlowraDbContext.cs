@@ -3,7 +3,6 @@ using Flowra.Backend.Domain.Identity;
 using Flowra.Backend.Persistence.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Flowra.Backend.Persistence.Main.Context
 {
@@ -23,9 +22,8 @@ namespace Flowra.Backend.Persistence.Main.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfigurationsFromAssembly(typeof(FlowraDbContext).Assembly);
-
             builder.ApplySoftDeleteQueryFilter();
+            builder.ApplyConfigurationsFromAssembly(typeof(FlowraDbContext).Assembly);
         }
     }
 }

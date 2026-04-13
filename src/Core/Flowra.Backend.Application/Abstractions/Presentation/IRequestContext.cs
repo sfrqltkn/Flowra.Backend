@@ -4,8 +4,9 @@
     {
         string CorrelationId { get; }
         int? UserId { get; }
-        string? Username { get; }
-        string IpAddress { get; }
+        string? UserName { get; }
+        string? IpAddress { get; }
         string? UserAgent { get; }
+        string Culture { get; }
     }
 }

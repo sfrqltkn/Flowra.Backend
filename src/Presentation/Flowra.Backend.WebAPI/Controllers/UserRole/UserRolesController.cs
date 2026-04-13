@@ -2,10 +2,12 @@
 using Flowra.Backend.Application.Features.Commands.UserRoles.RemoveRoleFromUser;
 using Flowra.Backend.Application.Features.Queries.UserRoles.GetAllUserRoles;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flowra.Backend.WebAPI.Controllers.UserRole
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Tags("UserRoles")]

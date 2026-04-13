@@ -39,7 +39,7 @@ namespace Flowra.Backend.Application.Features.Commands.UserRoles.RemoveRoleFromU
                 throw new OperationFailedException($"Rol kaldırılırken hata oluştu: {errors}");
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

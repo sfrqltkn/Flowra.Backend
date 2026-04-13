@@ -7,7 +7,7 @@
         {
             return new SuccessDetails
             {
-                StatusCode = 200,
+                Status = 200,
                 Detail = messageKey
             };
         }
@@ -17,7 +17,7 @@
         {
             return new SuccessDetails<T>
             {
-                StatusCode = 200,
+                Status = 200,
                 Detail = messageKey,
                 Data = data
             };
@@ -28,7 +28,7 @@
         {
             return new SuccessDetails<T>
             {
-                StatusCode = 201,
+                Status = 201,
                 Detail = messageKey,
                 Data = data
             };

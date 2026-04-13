@@ -1,6 +1,5 @@
 ﻿using Flowra.Backend.Application.DTOs.Expense;
-using Flowra.Backend.Application.Interfaces.Repositories;
-using Flowra.Backend.Application.Interfaces.Services;
+using Flowra.Backend.Application.Persistence.Repositories;
 using Flowra.Backend.Domain.Entities;
 
 namespace Flowra.Backend.Application.Services

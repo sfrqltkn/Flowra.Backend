@@ -33,7 +33,7 @@ namespace Flowra.Backend.Application.Features.Queries.Users.GetUserById
                 IsActive = user.IsActive
             };
 
-            return ResultResponse.Success(userDto, Response.Common.OperationSuccess);
+            return ResultResponse.Success(userDto, ResponseMessages.User.DetailLoaded);
         }
     }
 }

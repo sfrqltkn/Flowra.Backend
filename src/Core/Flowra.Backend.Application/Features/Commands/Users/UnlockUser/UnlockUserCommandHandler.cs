@@ -32,7 +32,7 @@ namespace Flowra.Backend.Application.Features.Commands.Users.UnlockUser
 
             await _userService.ResetAccessFailedCountAsync(user);
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

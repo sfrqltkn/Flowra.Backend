@@ -25,7 +25,7 @@ namespace Flowra.Backend.Application.Features.Queries.Roles.GetAllRoles
                 Name = role.Name!
             }).ToList();
 
-            return ResultResponse.Success(roleDtos, Response.Common.OperationSuccess);
+            return ResultResponse.Success(roleDtos, ResponseMessages.Role.Listed);
 
         }
     }

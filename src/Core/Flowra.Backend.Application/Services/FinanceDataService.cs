@@ -1,5 +1,4 @@
 ﻿using Flowra.Backend.Application.DTOs.FinanceData;
-using Flowra.Backend.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;

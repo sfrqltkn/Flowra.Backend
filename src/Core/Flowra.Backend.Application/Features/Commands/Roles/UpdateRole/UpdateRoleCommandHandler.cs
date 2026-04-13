@@ -37,7 +37,7 @@ namespace Flowra.Backend.Application.Features.Commands.Roles.UpdateRole
                 throw new OperationFailedException($"Rol güncellenirken hata oluştu: {errors}");
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

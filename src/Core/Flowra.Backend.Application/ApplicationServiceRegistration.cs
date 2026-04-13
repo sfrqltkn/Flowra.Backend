@@ -1,8 +1,8 @@
 ﻿using Flowra.Backend.Application.Common.Behaviors;
-using Flowra.Backend.Application.Interfaces.Services;
 using Flowra.Backend.Application.Services;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -10,16 +10,16 @@ namespace Flowra.Backend.Application
 {
     public static class ApplicationServiceRegistration
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             var assembly = typeof(ApplicationServiceRegistration).Assembly;
 
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
 
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(assembly);
 
             // İş Mantığı Servisleri

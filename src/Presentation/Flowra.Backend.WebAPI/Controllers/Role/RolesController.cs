@@ -4,10 +4,12 @@ using Flowra.Backend.Application.Features.Commands.Roles.UpdateRole;
 using Flowra.Backend.Application.Features.Queries.Roles.GetAllRoles;
 using Flowra.Backend.Application.Features.Queries.Roles.GetRoleById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flowra.Backend.WebAPI.Controllers.Role
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Tags("Roles")]

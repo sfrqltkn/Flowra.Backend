@@ -1,4 +1,5 @@
 ﻿using Flowra.Backend.Application.Abstractions.Presentation;
+using Flowra.Backend.WebAPI.Authentication;
 using Flowra.Backend.WebAPI.RequestContext;
 
 namespace Flowra.Backend.WebAPI
@@ -9,6 +10,9 @@ namespace Flowra.Backend.WebAPI
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IRequestContext, HttpRequestContext>();
+
+            // JWT Authentication
+            services.AddJwtAuthentication(configuration);
 
             return services;
         }

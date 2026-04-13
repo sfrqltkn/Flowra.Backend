@@ -13,7 +13,8 @@ namespace Flowra.Backend.Persistence.Main
         {
             var connectionString =
                 configuration.GetConnectionString("PostgreSQL");
-            // Interceptor DI kaydı
+
+            services.AddScoped<SoftDeleteInterceptor>();
             services.AddScoped<AuditTrackableInterceptor>();
 
             services.AddDbContext<FlowraDbContext>((sp, options) =>
@@ -28,6 +29,11 @@ namespace Flowra.Backend.Persistence.Main
                         maxRetryDelay: TimeSpan.FromSeconds(10),
                         errorCodesToAdd: null);
                 });
+
+                // Interceptor ekleniyor
+                options.AddInterceptors(
+                    sp.GetRequiredService<SoftDeleteInterceptor>(),
+                    sp.GetRequiredService<AuditTrackableInterceptor>());
             });
 
             return services;

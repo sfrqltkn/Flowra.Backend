@@ -1,5 +1,4 @@
 ﻿using Flowra.Backend.Application.DTOs.AiAdvisor;
-using Flowra.Backend.Application.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;

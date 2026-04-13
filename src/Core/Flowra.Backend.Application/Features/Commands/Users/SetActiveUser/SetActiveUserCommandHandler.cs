@@ -23,7 +23,7 @@ namespace Flowra.Backend.Application.Features.Commands.Users.SetActiveUser
 
             //Kullanıcının mevcut durumuyla istenen durum aynıysa, gereksiz güncelleme yapmamak adına başarılı bir yanıt döner
             if (user.IsActive == request.IsActive)
-                return ResultResponse.Success(Response.Common.OperationSuccess);
+                return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
 
             user.IsActive = request.IsActive;
             var result = await _userService.UpdateAsync(user);
@@ -40,7 +40,7 @@ namespace Flowra.Backend.Application.Features.Commands.Users.SetActiveUser
                 await _userService.UpdateSecurityStampAsync(user);
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="tr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>{{MailTitle}}</title>
+
+    <style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            background-color: #F4F8FB;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            box-sizing: border-box;
+        }
+
+        div[style*="margin: 16px 0"] {
+            margin: 0 !important;
+        }
+
+        img {
+            display: block;
+            border: 0;
+            outline: none;
+            text-decoration: none;
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%;
+            height: auto;
+        }
+
+        a {
+            color: #005596;
+            text-decoration: none;
+        }
+
+            a:hover {
+                color: #003366;
+                text-decoration: underline;
+            }
+
+        .page-wrapper {
+            width: 100%;
+            background-color: #F4F8FB;
+            padding: 40px 10px;
+        }
+
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            border: 1px solid #E6E6E6;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .top-bar {
+            height: 8px;
+            background-color: #005596;
+            font-size: 0;
+            line-height: 0;
+        }
+
+        .bottom-bar {
+            height: 8px;
+            background-color: #78BE20;
+            font-size: 0;
+            line-height: 0;
+        }
+
+        .logo-cell {
+            padding: 25px 0;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #F0F0F0;
+            text-align: center;
+        }
+
+        .content-cell {
+            padding: 10px 40px;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333333;
+            text-align: left;
+        }
+
+        .divider-cell {
+            border-top: 2px solid #F0F0F0;
+            font-size: 0;
+            line-height: 0;
+        }
+
+        .footer-cell {
+            padding: 8px 30px;
+            background-color: #FFFFFF;
+            text-align: center;
+        }
+
+        .footer-title {
+            margin: 0 0 4px 0;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #555555;
+        }
+
+        .footer-text {
+            margin: 0 0 4px 0;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #999999;
+        }
+
+        .footer-copy {
+            margin: 0;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #CCCCCC;
+        }
+
+        @media screen and (max-width: 600px) {
+            .page-wrapper {
+                padding: 24px 10px !important;
+            }
+
+            .content-cell {
+                padding: 10px 24px !important;
+            }
+
+            .footer-cell {
+                padding: 12px 20px !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin:0; padding:0; background-color:#F4F8FB; mso-line-height-rule:exactly;">
+    <div class="page-wrapper">
+        <div class="email-container">
+            <div class="top-bar">&nbsp;</div>
+
+            <div class="logo-cell">
+                <a href="https://www.europowerenerji.com.tr" target="_blank" rel="noopener" style="text-decoration:none;">
+                    <img src="{{Logo}}"
+                         alt="{{Mail_General_LogoAltName}}"
+                         style="width:220px; max-width:100%; height:auto; margin:0 auto;">
+                </a>
+            </div>
+
+            <div class="content-cell">
+                {{BODY_CONTENT}}
+            </div>
+
+            <div class="divider-cell">&nbsp;</div>
+
+            <div class="footer-cell">
+                <p class="footer-title">
+                    <a href="https://www.europowerenerji.com.tr" target="_blank" rel="noopener" style="color:#555555; text-decoration:none;">
+                        {{Footer_InfoOne}}
+                    </a>
+                </p>
+
+                <p class="footer-text">
+                    {{Footer_InfoTwo}}<br>
+                </p>
+
+                <p class="footer-copy">
+                    © {{CurrentYear}} {{Footer_InfoThree}}
+                </p>
+            </div>
+
+            <div class="bottom-bar">&nbsp;</div>
+        </div>
+    </div>
+</body>
+</html>

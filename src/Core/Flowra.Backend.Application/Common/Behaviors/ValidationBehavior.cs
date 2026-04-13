@@ -2,9 +2,7 @@
 using Flowra.Backend.Application.SystemMessages;
 using FluentValidation;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Flowra.Backend.Application.Common.Behaviors
 {
@@ -19,7 +17,7 @@ namespace Flowra.Backend.Application.Common.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            if (_validators is null || !_validators.Any())
+            if (!_validators.Any())
                 return await next();
 
             var context = new ValidationContext<TRequest>(request);
@@ -30,7 +28,7 @@ namespace Flowra.Backend.Application.Common.Behaviors
 
             var failures = validationResults
                 .SelectMany(r => r.Errors)
-                .Where(f => f != null && !string.IsNullOrWhiteSpace(f.ErrorMessage))
+                .Where(f => f != null)
                 .ToList();
 
             if (!failures.Any())
@@ -45,7 +43,7 @@ namespace Flowra.Backend.Application.Common.Behaviors
                           .ToArray()
                 );
 
-            throw new AppValidationException(detail: Response.Common.ValidationFailed, errors: errorDict);
+            throw new AppValidationException(detail: ResponseMessages.Common.ValidationFailed, errors: errorDict);
         }
     }
 }

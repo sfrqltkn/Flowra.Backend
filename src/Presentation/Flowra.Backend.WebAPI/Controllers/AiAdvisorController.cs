@@ -1,5 +1,5 @@
 ﻿using Flowra.Backend.Application.DTOs.AiAdvisor;
-using Flowra.Backend.Application.Interfaces.Services;
+using Flowra.Backend.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flowra.Backend.WebAPI.Controllers

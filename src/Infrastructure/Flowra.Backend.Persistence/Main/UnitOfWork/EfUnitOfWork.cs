@@ -1,4 +1,4 @@
-﻿using Flowra.Backend.Persistence.Main.Repositories;
+﻿using Flowra.Backend.Persistence.Repositories;
 using Flowra.Backend.Application.Abstractions.Persistence;
 using Flowra.Backend.Domain.Common;
 using Flowra.Backend.Persistence.Main.Context;

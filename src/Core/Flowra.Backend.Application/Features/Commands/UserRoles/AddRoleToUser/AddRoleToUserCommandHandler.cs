@@ -40,7 +40,7 @@ namespace Flowra.Backend.Application.Features.Commands.UserRoles.AddRoleToUser
                 throw new OperationFailedException($"Rol atama işlemi başarısız: {errors}");
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

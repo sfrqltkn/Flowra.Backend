@@ -1,4 +1,4 @@
-﻿using Flowra.Backend.Application.Interfaces.Services;
+﻿using Flowra.Backend.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

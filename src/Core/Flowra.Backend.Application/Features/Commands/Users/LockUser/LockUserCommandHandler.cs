@@ -34,7 +34,7 @@ namespace Flowra.Backend.Application.Features.Commands.Users.LockUser
 
             await _userService.UpdateSecurityStampAsync(user);
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

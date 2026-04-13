@@ -49,7 +49,7 @@ namespace Flowra.Backend.Application.Features.Commands.Users.UpdateUser
                 throw new OperationFailedException($"Kullanıcı güncellenirken hata meydana geldi: {errors}");
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }

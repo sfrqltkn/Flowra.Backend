@@ -7,10 +7,12 @@ using Flowra.Backend.Application.Features.Commands.Users.UpdateUser;
 using Flowra.Backend.Application.Features.Queries.Users.GetAllUsers;
 using Flowra.Backend.Application.Features.Queries.Users.GetUserById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flowra.Backend.WebAPI.Controllers.User
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Tags("Users")]

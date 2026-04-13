@@ -1,9 +1,10 @@
 ﻿using Flowra.Backend.Application.Abstractions.Presentation;
 using System.Security.Claims;
+using System.Globalization;
 
 namespace Flowra.Backend.WebAPI.RequestContext
 {
-    internal sealed class HttpRequestContext : IRequestContext
+    public sealed class HttpRequestContext : IRequestContext
     {
         private readonly IHttpContextAccessor _http;
 
@@ -12,26 +13,34 @@ namespace Flowra.Backend.WebAPI.RequestContext
             _http = http;
         }
 
+        private HttpContext? HttpContext => _http.HttpContext;
+
         public string CorrelationId =>
-            _http.HttpContext?.Items["CorrelationId"]?.ToString()
-            ?? _http.HttpContext?.TraceIdentifier
-            ?? Guid.NewGuid().ToString();
+            HttpContext?.Items["CorrelationId"]?.ToString()
+            ?? HttpContext?.TraceIdentifier
+            ?? "unknown";
 
         public int? UserId =>
-            int.TryParse(
-                _http.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                out var id)
+            int.TryParse(HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var id)
                 ? id
                 : null;
 
-        public string? Username =>
-            _http.HttpContext?.User?.Identity?.Name;
+        public string? UserName =>
+            HttpContext?.User?.Identity?.Name;
 
-        public string IpAddress =>
-            _http.HttpContext?.Connection?.RemoteIpAddress?.ToString()
-            ?? "127.0.0.1";
+        public string? IpAddress =>
+            HttpContext?.Connection?.RemoteIpAddress?.ToString();
 
-        public string? UserAgent =>
-            _http.HttpContext?.Request?.Headers["User-Agent"].ToString();
+        public string? UserAgent
+        {
+            get
+            {
+                var value = HttpContext?.Request?.Headers["User-Agent"].ToString();
+                return string.IsNullOrWhiteSpace(value) ? null : value;
+            }
+        }
+
+        public string Culture =>
+            CultureInfo.CurrentUICulture.Name;
     }
 }

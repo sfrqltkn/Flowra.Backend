@@ -35,7 +35,7 @@ namespace Flowra.Backend.Application.Features.Commands.Roles.CreateRole
                 throw new OperationFailedException($"Rol oluştururken hata meydana geldi: {errors}");
             }
 
-            return ResultResponse.Created(role.Id, Response.Common.OperationSuccess);
+            return ResultResponse.Created(role.Id, ResponseMessages.Common.OperationSuccess);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Flowra.Backend.Application.Features.Queries.Users.GetAllUsers
                 Roles = u.UserRoles.Select(ur => ur.Role.Name!).ToList()
             }).ToList();
 
-            return ResultResponse.Success(userDtos, Response.Common.OperationSuccess);
+            return ResultResponse.Success(userDtos, ResponseMessages.User.Listed);
         }
     }
 }

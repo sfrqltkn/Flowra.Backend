@@ -38,7 +38,7 @@ namespace Flowra.Backend.Application.Features.Commands.Roles.DeleteRole
                 throw new OperationFailedException($"Rol silinirken hata meydana geldi: {errors}");
             }
 
-            return ResultResponse.Success(Response.Common.OperationSuccess);
+            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
     }
 }
