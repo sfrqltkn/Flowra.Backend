@@ -22,6 +22,23 @@ namespace Flowra.Backend.WebAPI.Filters
                 objectResult.Value is SuccessDetails<AuthResultDto> authResponse)
             {
                 WriteAuthCookies(context.HttpContext, authResponse);
+
+                if (authResponse.Data != null && authResponse.Data.UserId == 0)
+                {
+                    var cleanResponse = new SuccessDetails
+                    {
+                        Type = authResponse.Type,
+                        Title = authResponse.Title,
+                        Status = authResponse.Status,
+                        Detail = authResponse.Detail,
+                        Meta = authResponse.Meta
+                    };
+
+                    context.Result = new ObjectResult(cleanResponse)
+                    {
+                        StatusCode = objectResult.StatusCode
+                    };
+                }
             }
 
             if (ShouldClearCookies(context))
@@ -56,6 +73,8 @@ namespace Flowra.Backend.WebAPI.Filters
 
             dto.AccessToken = string.Empty;
             dto.RefreshToken = string.Empty;
+            dto.RefreshTokenExpiresAtUtc = null;
+            dto.AccessTokenExpiresAtUtc = null;
         }
 
         private static bool ShouldClearCookies(ResultExecutingContext context)

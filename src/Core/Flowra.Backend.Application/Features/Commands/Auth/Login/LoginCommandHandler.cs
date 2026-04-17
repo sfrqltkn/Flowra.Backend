@@ -60,8 +60,8 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
                     {
                         UserId = user.Id,
                         Email = user.Email ?? "",
-                        Username = user.UserName ?? "",
-                        FullName = $"{user.FirstName} {user.LastName}".Trim(),
+                        FirstName = user.FirstName ?? "",
+                        LastName = user.LastName ?? "",
                         Roles = new List<string>(),
                         RequiresPasswordReset = true,
                         ResetPasswordToken = safeResetToken
@@ -77,15 +77,17 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
             var dto = new AuthResultDto
             {
                 UserId = user.Id,
+                UserName = user.UserName!,
+                FirstName = user.FirstName!,
+                LastName = user.LastName,
                 Email = user.Email!,
-                Username = user.UserName!,
-                FullName = $"{user.FirstName} {user.LastName}".Trim(),
                 Roles = roles.ToList(),
                 AccessToken = access.Token,
                 AccessTokenExpiresAtUtc = access.ExpiresAtUtc,
                 RefreshToken = refreshToken.Token,
                 RefreshTokenExpiresAtUtc = refreshToken.ExpiresAtUtc,
-                RequiresPasswordReset = false
+                RequiresPasswordReset = false,
+                ResetPasswordToken = ""
             };
 
             return ResultResponse.Success(dto, ResponseMessages.Auth.Login_Success);

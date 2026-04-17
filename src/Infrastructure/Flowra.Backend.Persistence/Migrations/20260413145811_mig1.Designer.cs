@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Flowra.Backend.Persistence.Migrations
 {
     [DbContext(typeof(FlowraDbContext))]
-    [Migration("20260409132955_mig1")]
+    [Migration("20260413145811_mig1")]
     partial class mig1
     {
         /// <inheritdoc />

@@ -46,7 +46,7 @@ namespace Flowra.Backend.Infrastructure.Services.Mail
             return await SendMailAsync(to, subject, body, true, cancellationToken);
         }
 
-        public async Task<SuccessDetails> SendEmailConfirmationMailAsync(string to, string fullName, string confirmationToken, CancellationToken cancellationToken = default)
+        public async Task<SuccessDetails> SendEmailConfirmationMailAsync(string to, int userId,string fullName, string confirmationToken, CancellationToken cancellationToken = default)
         {
             var replacements = new Dictionary<string, string>
             {
@@ -54,7 +54,7 @@ namespace Flowra.Backend.Infrastructure.Services.Mail
                 { "Mail_Body_EmailConfirmation_Info", "Hesabınızı aktifleştirmek için lütfen e-posta adresinizi doğrulayın." },
                 { "Mail_Button_EmailConfirmation", "E-postayı Doğrula" },
                 { "FullName", fullName },
-                { "Url", $"{_settings.ClientUrl}/auth/confirm-email?token={confirmationToken}" }
+                { "Url", $"{_settings.ClientUrl}/auth/confirm-email?userId={userId}&token={confirmationToken}" }
             };
 
             string subject = "E-posta Adresinizi Doğrulayın";

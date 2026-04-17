@@ -26,10 +26,17 @@ namespace Flowra.Backend.WebAPI.RequestContext
                 : null;
 
         public string? UserName =>
-            HttpContext?.User?.Identity?.Name;
+           HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+
+        public string? Email =>
+             HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value
+             ?? HttpContext?.User?.FindFirst("email")?.Value;
 
         public string? IpAddress =>
             HttpContext?.Connection?.RemoteIpAddress?.ToString();
+
+        public ClaimsPrincipal? User =>
+            _http.HttpContext?.User;
 
         public string? UserAgent
         {

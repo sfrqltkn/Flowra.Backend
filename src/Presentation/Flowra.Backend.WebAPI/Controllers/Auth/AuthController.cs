@@ -1,4 +1,5 @@
-﻿using Flowra.Backend.Application.Features.Commands.Auth.ChangePassword;
+﻿using Europower.EuroScada.Application.Features.Queries.Auth.GetCurrentUser;
+using Flowra.Backend.Application.Features.Commands.Auth.ChangePassword;
 using Flowra.Backend.Application.Features.Commands.Auth.ConfirmEmail;
 using Flowra.Backend.Application.Features.Commands.Auth.ForgotPassword;
 using Flowra.Backend.Application.Features.Commands.Auth.Login;
@@ -27,36 +28,16 @@ namespace Flowra.Backend.WebAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("me")]
         [Authorize]
-        public IActionResult GetCurrentUser()
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
         {
-            var allClaims = User.Claims.ToList();
-
-            var roles = allClaims
-                .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value)
-                .ToList();
-
-            var permissions = allClaims
-                .Where(c => c.Type == "permission")
-                .Select(c => c.Value)
-                .Distinct()
-                .ToList();
-
-            var userDto = new
-            {
-                Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                UserName = User.Identity?.Name,
-                Email = User.FindFirst(ClaimTypes.Email)?.Value,
-                Roles = roles,
-                Permissions = permissions
-            };
-
-            return Ok(userDto);
+            var result = await _mediator.Send(new GetCurrentUserQueryRequest(), cancellationToken);
+            return Ok(result);
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterCommandRequest request)
         {
             var result = await _mediator.Send(request);
@@ -64,6 +45,7 @@ namespace Flowra.Backend.WebAPI.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginCommandRequest request)
         {
             var result = await _mediator.Send(request);
@@ -88,7 +70,6 @@ namespace Flowra.Backend.WebAPI.Controllers
         }
 
         [HttpPost("logout")]
-        [Authorize]
         public async Task<IActionResult> Logout()
         {
             var result = await _mediator.Send(new LogoutCommandRequest());
@@ -128,7 +109,6 @@ namespace Flowra.Backend.WebAPI.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePasswordCommandRequest request)
         {
             var result = await _mediator.Send(request);

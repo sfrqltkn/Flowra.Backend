@@ -54,7 +54,7 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Register
             {
                 var token = await _userService.GenerateEmailConfirmationTokenAsync(user);
                 var encodedToken = TokenExtensions.EncodeToken(token);
-                await _mailService.SendEmailConfirmationMailAsync(user.Email!, $"{user.FirstName} {user.LastName}", encodedToken);
+                await _mailService.SendEmailConfirmationMailAsync(user.Email!, user.Id, $"{user.FirstName} {user.LastName}", encodedToken);
             }
             catch
             {

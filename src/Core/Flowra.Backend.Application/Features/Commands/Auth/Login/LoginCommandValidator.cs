@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace Flowra.Backend.Application.Features.Commands.Auth.Login
@@ -43,8 +44,9 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
                 return false;
 
             if (value.Contains("@"))
-                return value.Length <= MaxUsernameLength;
-
+            {
+                return new EmailAddressAttribute().IsValid(value) && value.Length <= MaxUsernameLength;
+            }
             return UserNameRegex.IsMatch(value);
         }
     }

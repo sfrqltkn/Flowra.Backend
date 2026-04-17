@@ -43,14 +43,8 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.RefreshToken
 
             var dto = new AuthResultDto
             {
-                UserId = user!.Id,
-                Email = user.Email ?? "",
-                Username = user.UserName ?? "",
-                FullName = $"{user.FirstName} {user.LastName}".Trim(),
                 AccessToken = accessToken.Token,
-                AccessTokenExpiresAtUtc = accessToken.ExpiresAtUtc,
                 RefreshToken = newRefreshToken.Token,
-                RefreshTokenExpiresAtUtc = newRefreshToken.ExpiresAtUtc
             };
 
             return ResultResponse.Success(dto, ResponseMessages.Auth.Refresh_Success);

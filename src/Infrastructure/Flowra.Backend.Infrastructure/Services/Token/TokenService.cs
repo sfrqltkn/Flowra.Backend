@@ -1,5 +1,4 @@
-﻿using Flowra.Backend.Application.DTOs.Auth;
-using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
+﻿using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
 using Flowra.Backend.Application.Abstractions.Persistence;
 using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Domain.Identity;
@@ -64,7 +63,9 @@ namespace Flowra.Backend.Infrastructure.Services.Token
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Email, user.Email ?? string.Empty),
+                new(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
@@ -115,7 +116,6 @@ namespace Flowra.Backend.Infrastructure.Services.Token
 
             if (token == null)
             {
-                throw new UnauthorizedException("Geçersiz yenileme token'ı.");
             }
 
             if (!token.IsActive)
