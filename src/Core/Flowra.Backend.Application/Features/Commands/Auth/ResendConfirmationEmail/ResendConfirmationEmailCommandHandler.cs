@@ -34,7 +34,8 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
 
                 await _mailService.SendResendConfirmationMailAsync(
                     request.Email,
-                    fullName,
+                    user.Id,
+                    fullName, 
                     safeToken);
             }
 

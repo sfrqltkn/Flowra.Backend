@@ -37,7 +37,7 @@ namespace Flowra.Backend.Infrastructure.Services.Mail
                 { "Mail_Body_PasswordReset_Info", "Şifrenizi sıfırlamak için aşağıdaki butona tıklayabilirsiniz." },
                 { "Mail_Button_ResetPassword", "Şifremi Sıfırla" },
                 { "UserName", fullName },
-                { "Url", $"{_settings.ClientUrl}/auth/reset-password?uid={userId}&token={resetToken}" }
+                { "Url", $"{_settings.ClientUrl}/auth/reset-password?userId={userId}&token={resetToken}" }
             };
 
             string subject = "Şifre Sıfırlama Talebi";
@@ -84,7 +84,7 @@ namespace Flowra.Backend.Infrastructure.Services.Mail
             return await SendMailAsync(to, subject, body, true, cancellationToken);
         }
 
-        public async Task<SuccessDetails> SendResendConfirmationMailAsync(string to, string fullName, string confirmationToken, CancellationToken cancellationToken = default)
+        public async Task<SuccessDetails> SendResendConfirmationMailAsync(string to, int userId, string fullName, string confirmationToken, CancellationToken cancellationToken = default)
         {
             var replacements = new Dictionary<string, string>
             {
@@ -92,7 +92,7 @@ namespace Flowra.Backend.Infrastructure.Services.Mail
                 { "Mail_Body_ResendConfirmation_Info", "E-posta doğrulama linkiniz yenilenmiştir. Aşağıdaki butona tıklayarak işleminizi tamamlayabilirsiniz." },
                 { "Mail_Button_ResendConfirmation", "E-postayı Doğrula" },
                 { "FullName", fullName },
-                { "Url", $"{_settings.ClientUrl}/auth/confirm-email?token={confirmationToken}&email={to}" }
+                { "Url", $"{_settings.ClientUrl}/auth/confirm-email?userId={userId}&token={confirmationToken}" }
             };
 
             string subject = "Yeni E-posta Doğrulama Linkiniz";

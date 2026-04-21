@@ -39,14 +39,17 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
             if (signInResult.IsLockedOut)
                 throw new UnauthorizedException("Hesabınız geçici olarak kilitlenmiştir.");
 
+            // Identity şifreyi doğru buldu ama "RequireConfirmedEmail" kuralına takıldıysa:
+            if (signInResult.IsNotAllowed && !user.EmailConfirmed)
+                throw new UnauthorizedException("E-posta adresiniz doğrulanmamış.");
+
+            // Eğer IsNotAllowed değilse ve Succeeded da değilse, demek ki şifre cidden yanlıştır.
             if (!signInResult.Succeeded)
                 throw new UnauthorizedException("Kullanıcı adı/e-posta veya şifre hatalı.");
 
             if (!user.IsActive)
                 throw new BusinessRuleException("Pasif kullanıcılar giriş yapamaz.");
 
-            if (!user.EmailConfirmed)
-                throw new UnauthorizedException("E-posta adresiniz doğrulanmamış.");
 
             if (user.NeedPasswordReset)
             {
