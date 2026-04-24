@@ -23,14 +23,6 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddScoped<TokenCookieFilter>();
-
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<TokenCookieFilter>();
-});
-
-
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);

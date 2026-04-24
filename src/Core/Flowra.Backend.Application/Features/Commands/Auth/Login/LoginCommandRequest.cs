@@ -4,10 +4,9 @@ using MediatR;
 
 namespace Flowra.Backend.Application.Features.Commands.Auth.Login
 {
-    public class LoginCommandRequest : IRequest<SuccessDetails<AuthResultDto>>
+    public class LoginCommandRequest : IRequest<SuccessDetails<LoginCommandDto>>
     {
         public string EmailOrUsername { get; set; } = null!;
         public string Password { get; set; } = null!;
-
     }
 }

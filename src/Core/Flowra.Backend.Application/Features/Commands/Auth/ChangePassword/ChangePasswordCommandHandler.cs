@@ -1,7 +1,9 @@
 ﻿using Flowra.Backend.Application.Abstractions.Infrastructure;
+using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
 using Flowra.Backend.Application.Abstractions.Presentation;
-using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Application.Common.Responses;
+using Flowra.Backend.Application.DTOs.Auth;
+using Flowra.Backend.Application.Extensions;
 using Flowra.Backend.Application.SystemMessages;
 using MediatR;
 
@@ -11,39 +13,39 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ChangePassword
     {
         private readonly IUserService _userService;
         private readonly IRequestContext _requestContext;
+        private readonly ITokenService _tokenService;
 
-        public ChangePasswordCommandHandler(IUserService userService, IRequestContext requestContext)
+        public ChangePasswordCommandHandler(IUserService userService, IRequestContext requestContext, ITokenService tokenService)
         {
             _userService = userService;
             _requestContext = requestContext;
+            _tokenService = tokenService;
         }
 
         public async Task<SuccessDetails> Handle(ChangePasswordCommandRequest request, CancellationToken cancellationToken)
         {
-            if (_requestContext.UserId is null)
-                throw new UnauthorizedException("Oturum bilgisi bulunamadı.");
+            var userId = _requestContext.UserId;
+            userId.ThrowIfNullUnauthorized(ResponseMessages.Auth.Unauthorized);
 
-            var user = await _userService.FindByIdAsync(_requestContext.UserId.Value.ToString());
+            var user = await _userService.FindByIdAsync(userId.Value.ToString());
+            user.ThrowIfNull(ResponseMessages.Auth.ChangePass_UserNotFound);
 
-            if (user is null)
-                throw new NotFoundException("Kullanıcı bulunamadı.");
+            var check = await _userService.CheckPasswordSignInAsync(user!, request.OldPassword, lockoutOnFailure: false);
+            check.Succeeded.ThrowIfFalse(ResponseMessages.Auth.ChangePass_WrongOldPassword);
 
-            var check = await _userService.CheckPasswordSignInAsync(user, request.OldPassword, lockoutOnFailure: false);
+            var result = await _userService.ChangePasswordAsync(user!, request.OldPassword, request.NewPassword);
+            result.ThrowIfFailed(ResponseMessages.Auth.ChangePass_Failed);
 
-            if (!check.Succeeded)
-                throw new UnauthorizedException("Mevcut şifre hatalı.");
+            await _userService.UpdateSecurityStampAsync(user!);
+            await _tokenService.RevokeAllAsync(_requestContext.UserId!.Value);
 
-            var result = await _userService.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-
-            if (!result.Succeeded)
+            var dto = new LogoutCommandDto
             {
-                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                throw new OperationFailedException($"Şifre değiştirme işlemi başarısız oldu: {errors}");
-            }
+                ClearAccessTokenCookie = true,
+                ClearRefreshTokenCookie = true
+            };
 
-            await _userService.UpdateSecurityStampAsync(user);
-
-            return ResultResponse.Success(ResponseMessages.Auth.ChangePass_Success);
+            return ResultResponse.Success(dto, ResponseMessages.Auth.ChangePass_Success);
         }
     }
 }

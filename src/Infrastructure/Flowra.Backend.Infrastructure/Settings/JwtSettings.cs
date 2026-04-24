@@ -8,7 +8,7 @@
         public string SigningKey { get; set; } = string.Empty;
         public string? EncryptionKey { get; set; }
         public bool RequireHttpsMetadata { get; set; } = true;
-        public int AccessTokenExpirationMinutes { get; set; } = 1;
+        public int AccessTokenExpirationMinutes { get; set; } = 15;
         public int RefreshTokenExpirationDays { get; set; } = 7;
     }
 }

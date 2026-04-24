@@ -22,22 +22,15 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
         {
             var user = await _userService.FindByEmailAsync(request.Email);
 
-            if (user is not null && user.IsActive && !user.EmailConfirmed)
-            {
-                var rawToken = await _userService.GenerateEmailConfirmationTokenAsync(user);
-                var safeToken = TokenExtensions.EncodeToken(rawToken);
-                var fullName = $"{user.FirstName} {user.LastName}".Trim();
+            user.ThrowIfNull(ResponseMessages.Auth.ResendEmail_UserNotFound);
+            user.EmailConfirmed.ThrowIfTrue(ResponseMessages.Auth.ResendEmail_AlreadyConfirmed);
+            user.IsActive.ThrowIfFalse(ResponseMessages.Auth.ResendEmail_Inactive);
 
-                var displayName = string.IsNullOrWhiteSpace(user.UserName)
-                    ? $"{user.FirstName} {user.LastName}".Trim()
-                    : user.UserName;
+            var rawToken = await _userService.GenerateEmailConfirmationTokenAsync(user);
+            var safeToken = TokenExtensions.EncodeToken(rawToken);
+            var fullName = $"{user.FirstName} {user.LastName}".Trim();
 
-                await _mailService.SendResendConfirmationMailAsync(
-                    request.Email,
-                    user.Id,
-                    fullName, 
-                    safeToken);
-            }
+            await _mailService.SendResendConfirmationMailAsync(request.Email, user.Id, fullName, safeToken);
 
             return ResultResponse.Success(ResponseMessages.Auth.ResendEmail_Sent);
         }

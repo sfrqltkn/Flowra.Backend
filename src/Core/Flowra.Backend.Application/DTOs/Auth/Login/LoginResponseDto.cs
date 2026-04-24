@@ -1,6 +1,6 @@
 ﻿namespace Flowra.Backend.Application.DTOs.Auth
 {
-    public class AuthResultDto
+    public class LoginResponseDto
     {
         public int UserId { get; set; }
         public string UserName { get; set; } = "";
@@ -8,18 +8,7 @@
         public string LastName { get; set; } = "";
         public string Email { get; set; } = "";
         public List<string> Roles { get; set; } = new();
-
-        // Tokenlar
-        public string? AccessToken { get; set; }
-        public DateTime? AccessTokenExpiresAtUtc { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpiresAtUtc { get; set; }
-
-        // İlk giriş şifre reset paketi
         public bool RequiresPasswordReset { get; set; }
         public string? ResetPasswordToken { get; set; }
     }
-
 }
-
-// Login sonrası dönen Access/Refresh Token bilgileri.

@@ -1,13 +1,14 @@
 ﻿using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
 using Flowra.Backend.Application.Abstractions.Presentation;
-using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Application.Common.Responses;
+using Flowra.Backend.Application.DTOs.Auth;
+using Flowra.Backend.Application.Extensions;
 using Flowra.Backend.Application.SystemMessages;
 using MediatR;
 
 namespace Flowra.Backend.Application.Features.Commands.Auth.Logout
 {
-    public class LogoutCommandHandler : IRequestHandler<LogoutCommandRequest, SuccessDetails>
+    public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommandRequest, SuccessDetails<LogoutCommandDto>>
     {
         private readonly ITokenService _tokenService;
         private readonly IRequestContext _requestContext;
@@ -18,14 +19,20 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Logout
             _requestContext = requestContext;
         }
 
-        public async Task<SuccessDetails> Handle(LogoutCommandRequest request, CancellationToken cancellationToken)
+        public async Task<SuccessDetails<LogoutCommandDto>> Handle(LogoutCommandRequest request, CancellationToken cancellationToken)
         {
-            if (_requestContext.UserId is null)
-                throw new UnauthorizedException("Oturum bilgisi bulunamadı.");
+            var userId = _requestContext.UserId;
+            userId.ThrowIfNullUnauthorized(ResponseMessages.Auth.Unauthorized);
 
-            await _tokenService.RevokeAllAsync(_requestContext.UserId.Value);
+            await _tokenService.RevokeAllAsync(_requestContext.UserId!.Value);
 
-            return ResultResponse.Success(ResponseMessages.Auth.Logout_Success);
+            var dto = new LogoutCommandDto
+            {
+                ClearAccessTokenCookie = true,
+                ClearRefreshTokenCookie = true
+            };
+
+            return ResultResponse.Success(dto,ResponseMessages.Auth.Logout_Success);
         }
     }
 }

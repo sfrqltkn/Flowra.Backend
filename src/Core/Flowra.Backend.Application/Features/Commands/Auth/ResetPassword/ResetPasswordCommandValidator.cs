@@ -6,9 +6,9 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResetPassword
     public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordCommandRequest>
     {
         private const int MinPasswordLength = 6;
-        private const int MaxPasswordLength = 20;
+        private const int MaxPasswordLength = 30;
 
-        // şifre politikası regex'i (en az 1 büyük, 1 küçük, 1 rakam, 1 özel karakter)
+        // şifre politikası regex'i: En az 1 büyük, 1 küçük, 1 rakam, 1 özel karakter
         private static readonly Regex StrongPasswordRegex =
             new(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$",
                 RegexOptions.Compiled);
@@ -32,19 +32,14 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResetPassword
 
             RuleFor(x => x.NewPassword)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                    .WithMessage("Yeni şifre zorunludur.")
-                .MinimumLength(MinPasswordLength)
-                    .WithMessage($"Yeni şifre en az {MinPasswordLength} karakter olabilir.")
-                .MaximumLength(MaxPasswordLength)
-                    .WithMessage($"Yeni şifre en fazla {MaxPasswordLength} karakter olabilir.")
-                .Must(IsStrongPassword)
-                    .WithMessage(
-                        "Yeni şifre; büyük harf, küçük harf, rakam ve özel karakter içermelidir.");
+                .NotEmpty().WithMessage("Şifre zorunludur.")
+                .Must(p => p == null || p.Trim() == p).WithMessage("Şifrenin başında veya sonunda boşluk olamaz.")
+                .Length(MinPasswordLength, MaxPasswordLength).WithMessage($"Şifre {MinPasswordLength} ile {MaxPasswordLength} karakter arasında olmalıdır.")
+                .Must(IsStrongPassword).WithMessage("Şifre; büyük harf, küçük harf, rakam ve özel karakter içermelidir.");
 
             RuleFor(x => x.ConfirmNewPassword)
-                .NotEmpty()
-                .WithMessage("Yeni şifre onayı zorunludur.")
+                .NotEmpty().WithMessage("Yeni şifre onayı zorunludur.")
+                .Must(p => p == null || p.Trim() == p).WithMessage("Şifrenin başında veya sonunda boşluk olamaz.")
                 .Equal(x => x.NewPassword)
                 .WithMessage("Yeni şifre ile onay şifresi eşleşmiyor.");
         }

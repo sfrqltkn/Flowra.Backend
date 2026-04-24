@@ -19,33 +19,15 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ConfirmEmail
         public async Task<SuccessDetails> Handle(ConfirmEmailCommandRequest request, CancellationToken cancellationToken)
         {
             var user = await _userService.FindByIdAsync(request.UserId.ToString());
+            user.ThrowIfNull(ResponseMessages.Auth.ConfirmEmail_UserNotFound);
 
-            if (user is null)
-                throw new NotFoundException("Kullanıcı bulunamadı.");
+            user!.IsActive.ThrowIfFalse(ResponseMessages.Auth.ConfirmEmail_Inactive);
+            user.EmailConfirmed.ThrowIfTrue(ResponseMessages.Auth.ConfirmEmail_AlreadyConfirmed);
 
-            if (!user.IsActive)
-                throw new BusinessRuleException("Pasif kullanıcılar için e-posta doğrulama işlemi yapılamaz.");
+            string decodedToken = TokenExtensions.DecodeToken(request.Token);
 
-            if (user.EmailConfirmed)
-                throw new ConflictException("Bu e-posta adresi zaten doğrulanmış.", nameof(request.UserId));
-
-            string decodedToken;
-            try
-            {
-                decodedToken = TokenExtensions.DecodeToken(request.Token);
-            }
-            catch
-            {
-                throw new BadRequestException("Geçersiz doğrulama token'ı.");
-            }
-
-            var result = await _userService.ConfirmEmailAsync(user, decodedToken);
-
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                throw new OperationFailedException($"E-posta doğrulama işlemi başarısız oldu: {errors}");
-            }
+            var confirmResult = await _userService.ConfirmEmailAsync(user, decodedToken);
+            confirmResult.ThrowIfFailed(ResponseMessages.Auth.ConfirmEmail_Failed);
 
             return ResultResponse.Success(ResponseMessages.Auth.ConfirmEmail_Success);
         }

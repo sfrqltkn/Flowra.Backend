@@ -22,13 +22,11 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Register
 
         public async Task<SuccessDetails<int>> Handle(RegisterCommandRequest request, CancellationToken cancellationToken)
         {
-            var existingEmail = await _userService.FindByEmailAsync(request.Email);
-            if (existingEmail is not null)
-                throw new ConflictException("Bu e-posta adresi sistemde zaten kayıtlı.", nameof(request.Email));
+            (await _userService.FindByEmailAsync(request.Email))
+                  .ThrowIfExists(ResponseMessages.Auth.Register_EmailConflict);
 
-            var existingUserName = await _userService.FindByNameAsync(request.UserName);
-            if (existingUserName is not null)
-                throw new ConflictException("Bu kullanıcı adı sistemde zaten kayıtlı.", nameof(request.UserName));
+            (await _userService.FindByNameAsync(request.UserName))
+                 .ThrowIfExists(ResponseMessages.Auth.Register_UsernameConflict);
 
             var user = new User
             {
@@ -39,27 +37,22 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Register
                 PhoneNumber = request.PhoneNumber,
                 IsActive = true,
                 EmailConfirmed = false,
-                NeedPasswordReset = false
+                NeedPasswordReset = false,
             };
 
-            var result = await _userService.CreateAsync(user, request.Password);
-
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                throw new OperationFailedException($"Kullanıcı kayıt işlemi sırasında hata meydana geldi: {errors}");
-            }
+            var createResult = await _userService.CreateAsync(user, request.Password);
+            createResult.ThrowIfFailed(ResponseMessages.Auth.Register_IdentityFailed);
 
             try
             {
-                var token = await _userService.GenerateEmailConfirmationTokenAsync(user);
-                var encodedToken = TokenExtensions.EncodeToken(token);
-                await _mailService.SendEmailConfirmationMailAsync(user.Email!, user.Id, $"{user.FirstName} {user.LastName}", encodedToken);
+                var rawToken = await _userService.GenerateEmailConfirmationTokenAsync(user);
+                var safeToken = TokenExtensions.EncodeToken(rawToken);
+                await _mailService.SendEmailConfirmationMailAsync(user.Email!, user.Id,$"{user.FirstName} {user.LastName}", safeToken);
             }
-            catch
+            catch (Exception)
             {
                 await _userService.DeleteAsync(user);
-                throw new OperationFailedException("Doğrulama e-postası gönderilemediği için kayıt işlemi geri alındı.");
+                throw new BusinessRuleException(ResponseMessages.Auth.Register_MailSendFailed);
             }
 
             return ResultResponse.Created(user.Id, ResponseMessages.Auth.Register_Success);

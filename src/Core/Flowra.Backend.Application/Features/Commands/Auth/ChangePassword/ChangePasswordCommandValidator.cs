@@ -6,44 +6,36 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ChangePassword
     public class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommandRequest>
     {
         private const int MinPasswordLength = 6;
-        private const int MaxPasswordLength = 20;
+        private const int MaxPasswordLength = 30;
 
-        //  Kurumsal password policy regex
-        // En az 1 büyük, 1 küçük, 1 rakam, 1 özel karakter
+        // şifre politikası regex'i: En az 1 büyük, 1 küçük, 1 rakam, 1 özel karakter
         private static readonly Regex StrongPasswordRegex =
             new(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$",
                 RegexOptions.Compiled);
 
         public ChangePasswordCommandValidator()
         {
-            RuleFor(x => x.UserId)
-                 .Cascade(CascadeMode.Stop)
-                 .NotEmpty().WithMessage("Kullanıcı ID zorunludur.")
-                 .GreaterThan(0).WithMessage("Geçerli bir kullanıcı ID giriniz.");
-
             RuleFor(x => x.OldPassword)
-                .NotEmpty()
-                .WithMessage("Mevcut şifre zorunludur.");
+                 .Cascade(CascadeMode.Stop)
+                 .NotEmpty().WithMessage("Mevcut şifrenizi girmeniz zorunludur.")
+                 .Must(p => p == null || p.Trim() == p).WithMessage("Mevcut şifrenizin başında veya sonunda boşluk olamaz.")
+                 .Length(MinPasswordLength, MaxPasswordLength).WithMessage($"Mevcut şifreniz {MinPasswordLength} ile {MaxPasswordLength} karakter arasında olmalıdır.")
+                 .Must(IsStrongPassword).WithMessage("Mevcut şifreniz; büyük harf, küçük harf, rakam ve özel karakter içermelidir.");
 
             RuleFor(x => x.NewPassword)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                    .WithMessage("Yeni şifre zorunludur.")
-                .MinimumLength(MinPasswordLength)
-                    .WithMessage($"Yeni şifre en az {MinPasswordLength} karakter olmalıdır.")
-                .MaximumLength(MaxPasswordLength)
-                    .WithMessage($"Yeni şifre en fazla {MaxPasswordLength} karakter olabilir.")
-                .Must(IsStrongPassword)
-                    .WithMessage(
-                        "Yeni şifre; büyük harf, küçük harf, rakam ve özel karakter içermelidir.")
-                .Must((req, newPassword) => newPassword != req.OldPassword)
-                    .WithMessage("Yeni şifre, mevcut şifre ile aynı olamaz.");
+                .NotEmpty().WithMessage("Yeni şifre zorunludur.")
+                .Must(p => p == null || p.Trim() == p).WithMessage("Yeni şifrenin başında veya sonunda boşluk olamaz.")
+                .Length(MinPasswordLength, MaxPasswordLength).WithMessage($"Yeni şifre {MinPasswordLength} ile {MaxPasswordLength} karakter arasında olmalıdır.")
+                .Must(IsStrongPassword).WithMessage("Yeni şifre; büyük harf, küçük harf, rakam ve özel karakter içermelidir.")
+                .Must((req, newPassword) => newPassword != req.OldPassword).WithMessage("Yeni şifre, mevcut şifre ile aynı olamaz.");
 
             RuleFor(x => x.ConfirmNewPassword)
-                .NotEmpty()
-                .WithMessage("Yeni şifre onayı zorunludur.")
-                .Equal(x => x.NewPassword)
-                .WithMessage("Yeni şifre ile onay şifresi eşleşmiyor.");
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Yeni şifre onayı zorunludur.")
+                .Must(p => p == null || p.Trim() == p).WithMessage("Yeni şifre onayının başında veya sonunda boşluk olamaz.")
+                .Length(MinPasswordLength, MaxPasswordLength).WithMessage($"Yeni şifre onayı {MinPasswordLength} ile {MaxPasswordLength} karakter arasında olmalıdır.")
+                .Equal(x => x.NewPassword).WithMessage("Yeni şifre ile onay şifresi eşleşmiyor.");
         }
 
         private static bool IsStrongPassword(string password)

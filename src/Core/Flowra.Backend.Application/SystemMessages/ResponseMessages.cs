@@ -44,6 +44,7 @@
             public const string Lock_EnableFailed = "User_Lock_EnableFailed"; // Lockout özelliği aktif edilirken hata.
             public const string Lock_DateSetFailed = "User_Lock_DateSetFailed"; // Kilit süresi atanırken hata.
             public const string Lock_UpdateFailed = "User_Lock_UpdateFailed"; // Kilit sonrası update işlemi başarısız.
+            public const string Lock_MinuteNeeded = "User_Lock_MinuteNeeded"; // Kullanıcı kitlemek için süre girmek zorunludur.
 
             public const string Unlock_NotFound = "User_Unlock_NotFound"; // Kilidi açılacak kullanıcı bulunamadı.
             public const string Unlock_DateResetFailed = "User_Unlock_DateResetFailed"; // Kilit tarihi sıfırlanırken hata.
@@ -67,6 +68,15 @@
             public const string DetailLoaded = "User_DetailLoaded";
 
         }
+
+        public static class CurrentUser
+        {
+            // GET Operations
+            public const string CurrentUser_Unauthorized = "CurrentUser_Unauthorized";          // Geçerli bir oturum bulunamadı.
+            public const string CurrentUser_GetById_NotFound = "CurrentUser_GetById_NotFound";  // Kullanıcı bulunamadı.
+            public const string Listed = "CurrentUser_Listed";                                  // Kullanıcı başarıyla listelendi.
+        }
+
         public static class Role
         {
             // GET Operations
@@ -147,6 +157,9 @@
 
             // PASSWORD Operations (Reset & Change)
             public const string ForgotPass_Sent = "Auth_ForgotPass_Sent"; // Şifremi unuttum maili gönderildi.
+            public const string ForgotPass_UserNotFound = "Auth_ForgotPass_UserNotFound"; // Kullanıcı Bulunamadı.
+            public const string ForgotPass_EmailNotConfirmed = "Auth_ForgotPass_EmailNotConfirmed"; // E-posta doğrulanmamış.
+            public const string ForgotPass_Inactive = "Auth_ForgotPass_Inactive"; // Pasif kullanıcı şifre sıfırlayamaz.
 
             public const string ResetPass_UserNotFound = "Auth_ResetPass_UserNotFound"; // Resetlenecek kullanıcı yok.
             public const string ResetPass_Inactive = "Auth_ResetPass_Inactive"; // Pasif kullanıcı şifre sıfırlayamaz.
@@ -166,7 +179,10 @@
             public const string ConfirmEmail_Failed = "Auth_ConfirmEmail_Failed"; // Doğrulama başarısız (Token geçersiz).
             public const string ConfirmEmail_Success = "Auth_ConfirmEmail_Success"; // Mail doğrulandı.
 
+            public const string ResendEmail_UserNotFound = "Auth_ResendEmail_UserNotFound"; // Kullanıcı yok.
+            public const string ResendEmail_AlreadyConfirmed = "Auth_ResendEmail_AlreadyConfirmed"; // Zaten doğrulanmış.
             public const string ResendEmail_RateLimit = "Auth_ResendEmail_RateLimit"; // Çok sık istek atıldı.
+            public const string ResendEmail_Inactive = "Auth_ResendEmail_Inactive"; // Pasif kullanıcı.
             public const string ResendEmail_Sent = "Auth_ResendEmail_Sent"; // Tekrar gönderildi.
 
             // LOGOUT & OTHERS
@@ -252,6 +268,19 @@
             public const string VerifiedSuccess = "Email_VerifiedSuccess";      // Doğrulama başarılı
             public const string AlreadyVerified = "Email_AlreadyVerified";      // Zaten doğrulanmış
             public const string VerificationFailed = "Email_VerificationFailed";// Doğrulama başarısız (Token hatalı vs.)
+        }
+
+        public static class Company
+        {
+            // GET Operations
+            public const string GetById_NotFound = "Company_GetById_NotFound"; //  ID ile şirket sorgularken kayıt bulunamadı. 
+        }
+        // CORS Configuration Operations
+        public static class Cors
+        {
+            public const string SettingsNotFound = "Cors_SettingsNotFound"; // appsettings.json içerisinde CorsSettings bölümü bulunamadı.
+            public const string OriginsEmpty = "Cors_OriginsEmpty"; // CORS konfigürasyonunda 'AllowedOrigins' boş bırakılamaz, en az bir domain eklenmelidir.
+            public const string WildcardNotAllowed = "Cors_WildcardNotAllowed"; // AllowCredentials aktifken AllowedOrigins içerisinde wildcard ('*') kullanılamaz. Açık domain belirtilmelidir.
         }
     }
 }

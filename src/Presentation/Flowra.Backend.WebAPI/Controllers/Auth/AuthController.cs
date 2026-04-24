@@ -8,24 +8,28 @@ using Flowra.Backend.Application.Features.Commands.Auth.RefreshToken;
 using Flowra.Backend.Application.Features.Commands.Auth.Register;
 using Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEmail;
 using Flowra.Backend.Application.Features.Commands.Auth.ResetPassword;
+using Flowra.Backend.Presentation.Abstractions;
+using Flowra.Backend.WebAPI.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Flowra.Backend.WebAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Tags("Authentication")]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ITokenCookieService _tokenCookieService;
 
-        public AuthController(IMediator mediator)
+        public AuthController(
+            IMediator mediator,
+            ITokenCookieService tokenCookieService)
         {
             _mediator = mediator;
+            _tokenCookieService = tokenCookieService;
         }
 
         [Authorize]
@@ -37,16 +41,15 @@ namespace Flowra.Backend.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterCommandRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginCommandRequest request)
+        [ServiceFilter(typeof(TokenCookieFilter))]
+        public async Task<IActionResult> Login([FromBody] LoginCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
@@ -54,22 +57,21 @@ namespace Flowra.Backend.WebAPI.Controllers
 
         [HttpPost("refresh-token")]
         [AllowAnonymous]
+        [ServiceFilter(typeof(TokenCookieFilter))]
         public async Task<IActionResult> RefreshToken()
         {
-            var refreshToken = Request.Cookies["RefreshToken"];
-
-            if (string.IsNullOrWhiteSpace(refreshToken))
-                return Unauthorized("Refresh token bulunamadı.");
-
-            var result = await _mediator.Send(new RefreshTokenCommandRequest
+            var request = new RefreshTokenCommandRequest
             {
-                RefreshToken = refreshToken
-            });
+                RefreshToken = _tokenCookieService.GetRefreshToken() ?? string.Empty
+            };
 
+            var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("logout")]
+        [Authorize]
+        [ServiceFilter(typeof(TokenCookieFilter))]
         public async Task<IActionResult> Logout()
         {
             var result = await _mediator.Send(new LogoutCommandRequest());
@@ -77,39 +79,38 @@ namespace Flowra.Backend.WebAPI.Controllers
         }
 
         [HttpPost("forgot-password")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordCommandRequest request)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("reset-password")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(ResetPasswordCommandRequest request)
+        [ServiceFilter(typeof(TokenCookieFilter))]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("resend-confirmation-email")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ResendConfirmationEmail(ResendConfirmationEmailCommandRequest request)
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("confirm-email")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommandRequest request)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordCommandRequest request)
+        [Authorize]
+        [ServiceFilter(typeof(TokenCookieFilter))]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommandRequest request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);

@@ -10,21 +10,15 @@ namespace Flowra.Backend.Application.Abstractions.Infrastructure.Token
         Task<AccessTokenResult> GenerateAccessTokenAsync(User user, IEnumerable<Claim>? extraClaims = null);
 
         // Refresh token oluşturma 
-        Task<RefreshToken> CreateRefreshTokenAsync(User user, string ipAddress);
+        Task<RefreshToken> CreateRefreshTokenAsync(User user);
 
         // Refresh token doğrulama
         Task<RefreshToken> ValidateRefreshTokenAsync(string refreshToken);
 
         // Refresh token döndürme 
-        Task<RefreshToken> RotateRefreshTokenAsync(User user, string oldToken, string ipAddress);
+        Task<RefreshToken> RotateRefreshTokenAsync(User user, string oldToken);
 
         // Kullanıcının tüm oturumlarını kapatma
         Task RevokeAllAsync(int userId);
-
-        // Tekil token iptali 
-        Task<bool> RevokeTokenAsync(string refreshToken, string ipAddress);
-
-        // JWT doğrulama (Access Token)
-        Task<ClaimsPrincipal> ValidateJwtTokenAsync(string token, bool validateLifetime = true);
     }
 }

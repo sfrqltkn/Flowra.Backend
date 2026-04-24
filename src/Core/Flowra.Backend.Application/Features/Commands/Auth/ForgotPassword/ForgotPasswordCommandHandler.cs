@@ -21,17 +21,19 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ForgotPassword
         public async Task<SuccessDetails> Handle(ForgotPasswordCommandRequest request, CancellationToken cancellationToken)
         {
             var user = await _userService.FindByEmailAsync(request.Email);
+            user.ThrowIfNull(ResponseMessages.Auth.ForgotPass_UserNotFound);
 
-            if (user is not null && user.EmailConfirmed && user.IsActive)
-            {
-                var token = await _userService.GeneratePasswordResetTokenAsync(user);
-                var encodedToken = TokenExtensions.EncodeToken(token);
-                var fullName = $"{user.FirstName} {user.LastName}".Trim();
+            user!.IsActive.ThrowIfFalse(ResponseMessages.Auth.ForgotPass_Inactive);
+            user.EmailConfirmed.ThrowIfFalse(ResponseMessages.Auth.ForgotPass_EmailNotConfirmed);
 
-                await _mailService.SendPasswordResetMailAsync(user.Email!, user.Id, fullName, encodedToken);
-            }
 
-            return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
+            var rawToken = await _userService.GeneratePasswordResetTokenAsync(user);
+            var safeToken = TokenExtensions.EncodeToken(rawToken);
+            var fullName = $"{user.FirstName} {user.LastName}".Trim();
+
+            await _mailService.SendPasswordResetMailAsync(user.Email!, user.Id, fullName, safeToken);
+
+            return ResultResponse.Success(ResponseMessages.Auth.ForgotPass_Sent);
         }
     }
 }

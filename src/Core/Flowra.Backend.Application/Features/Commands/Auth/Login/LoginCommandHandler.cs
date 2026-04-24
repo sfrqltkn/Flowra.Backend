@@ -1,7 +1,5 @@
 ﻿using Flowra.Backend.Application.Abstractions.Infrastructure;
 using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
-using Flowra.Backend.Application.Abstractions.Presentation;
-using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Application.Common.Responses;
 using Flowra.Backend.Application.SystemMessages;
 using Flowra.Backend.Application.DTOs.Auth;
@@ -10,74 +8,66 @@ using MediatR;
 
 namespace Flowra.Backend.Application.Features.Commands.Auth.Login
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommandRequest, SuccessDetails<AuthResultDto>>
+    public class LoginCommandHandler : IRequestHandler<LoginCommandRequest, SuccessDetails<LoginCommandDto>>
     {
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
-        private readonly IRequestContext _requestContext;
 
-        public LoginCommandHandler(IUserService userService, ITokenService tokenService, IRequestContext requestContext)
+        public LoginCommandHandler(ITokenService tokenService, IUserService userService)
         {
-            _userService = userService;
             _tokenService = tokenService;
-            _requestContext = requestContext;
+            _userService = userService;
         }
 
-        public async Task<SuccessDetails<AuthResultDto>> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
+        public async Task<SuccessDetails<LoginCommandDto>> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
         {
             var isEmail = request.EmailOrUsername.Contains("@");
-
             var user = isEmail
                 ? await _userService.FindByEmailAsync(request.EmailOrUsername)
                 : await _userService.FindByNameAsync(request.EmailOrUsername);
 
-            if (user is null)
-                throw new UnauthorizedException("Kullanıcı adı/e-posta veya şifre hatalı.");
+            user.ThrowIfNull(ResponseMessages.Auth.Login_UserNotFound);
 
-            var signInResult = await _userService.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
+            var signIn = await _userService.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
 
-            if (signInResult.IsLockedOut)
-                throw new UnauthorizedException("Hesabınız geçici olarak kilitlenmiştir.");
+            signIn.IsLockedOut.ThrowIfTrue(ResponseMessages.Auth.Login_Locked);
+            signIn.Succeeded.ThrowIfFalse(ResponseMessages.Auth.Login_InvalidCredentials);
 
-            // Identity şifreyi doğru buldu ama "RequireConfirmedEmail" kuralına takıldıysa:
-            if (signInResult.IsNotAllowed && !user.EmailConfirmed)
-                throw new UnauthorizedException("E-posta adresiniz doğrulanmamış.");
-
-            // Eğer IsNotAllowed değilse ve Succeeded da değilse, demek ki şifre cidden yanlıştır.
-            if (!signInResult.Succeeded)
-                throw new UnauthorizedException("Kullanıcı adı/e-posta veya şifre hatalı.");
-
-            if (!user.IsActive)
-                throw new BusinessRuleException("Pasif kullanıcılar giriş yapamaz.");
-
+            user!.IsActive.ThrowIfFalse(ResponseMessages.Auth.Login_Inactive);
+            user.EmailConfirmed.ThrowIfFalse(ResponseMessages.Auth.Login_EmailNotConfirmed);
 
             if (user.NeedPasswordReset)
             {
                 var rawResetToken = await _userService.GeneratePasswordResetTokenAsync(user);
                 var safeResetToken = TokenExtensions.EncodeToken(rawResetToken);
-                return new SuccessDetails<AuthResultDto>
+
+                var loginResponse = new LoginResponseDto
+                {
+                    UserId = user.Id,
+                    Email = user.Email ?? "",
+                    FirstName = user.FirstName ?? "",
+                    LastName = user.LastName ?? "",
+                    Roles = new List<string>(),
+                    RequiresPasswordReset = true,
+                    ResetPasswordToken = safeResetToken
+                };
+
+                return new SuccessDetails<LoginCommandDto>
                 {
                     Status = 200,
                     Detail = ResponseMessages.Auth.Login_PasswordResetRequired,
-                    Data = new AuthResultDto
+                    Data = new LoginCommandDto
                     {
-                        UserId = user.Id,
-                        Email = user.Email ?? "",
-                        FirstName = user.FirstName ?? "",
-                        LastName = user.LastName ?? "",
-                        Roles = new List<string>(),
-                        RequiresPasswordReset = true,
-                        ResetPasswordToken = safeResetToken
+                        Response = loginResponse,
                     }
                 };
             }
 
             var access = await _tokenService.GenerateAccessTokenAsync(user);
-            var ipAddress = string.IsNullOrWhiteSpace(_requestContext.IpAddress) ? "unknown" : _requestContext.IpAddress;
-            var refreshToken = await _tokenService.CreateRefreshTokenAsync(user, ipAddress);
+            var refreshToken = await _tokenService.CreateRefreshTokenAsync(user);
             var roles = await _userService.GetRolesAsync(user);
 
-            var dto = new AuthResultDto
+            var dto = new LoginResponseDto
             {
                 UserId = user.Id,
                 UserName = user.UserName!,
@@ -85,15 +75,20 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
                 LastName = user.LastName,
                 Email = user.Email!,
                 Roles = roles.ToList(),
-                AccessToken = access.Token,
-                AccessTokenExpiresAtUtc = access.ExpiresAtUtc,
-                RefreshToken = refreshToken.Token,
-                RefreshTokenExpiresAtUtc = refreshToken.ExpiresAtUtc,
                 RequiresPasswordReset = false,
                 ResetPasswordToken = ""
             };
 
-            return ResultResponse.Success(dto, ResponseMessages.Auth.Login_Success);
+            var loginCommandDto = new LoginCommandDto
+            {
+                Response = dto,
+                AccessToken = access.Token,
+                AccessTokenExpiresAtUtc = access.ExpiresAtUtc,
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiresAtUtc = refreshToken.ExpiresAtUtc
+            };
+
+            return ResultResponse.Success(loginCommandDto, ResponseMessages.Auth.Login_Success);
         }
     }
 }

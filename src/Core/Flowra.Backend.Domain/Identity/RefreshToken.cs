@@ -35,11 +35,10 @@ namespace Flowra.Backend.Domain.Identity
             IsUsed = true;
         }
 
-        public void Revoke(string? replacedByToken, string ipAddress, string? reason = null)
+        public void Revoke(string? replacedByToken, string? reason = null)
         {
             RevokedAtUtc = DateTime.UtcNow;
             ReplacedByToken = replacedByToken;
-            RevokedByIp = ipAddress;
             ReasonRevoked = reason;
         }
     }
