@@ -20,7 +20,10 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
 
         public async Task<SuccessDetails> Handle(ResendConfirmationEmailCommandRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindByEmailAsync(request.Email);
+            var isEmail = request.EmailOrUsername.Contains("@");
+            var user = isEmail
+                ? await _userService.FindByEmailAsync(request.EmailOrUsername)
+                : await _userService.FindByNameAsync(request.EmailOrUsername);
 
             user.ThrowIfNull(ResponseMessages.Auth.ResendEmail_UserNotFound);
             user.EmailConfirmed.ThrowIfTrue(ResponseMessages.Auth.ResendEmail_AlreadyConfirmed);
@@ -30,7 +33,7 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
             var safeToken = TokenExtensions.EncodeToken(rawToken);
             var fullName = $"{user.FirstName} {user.LastName}".Trim();
 
-            await _mailService.SendResendConfirmationMailAsync(request.Email, user.Id, fullName, safeToken);
+            await _mailService.SendResendConfirmationMailAsync(user.Email!, user.Id, fullName, safeToken);
 
             return ResultResponse.Success(ResponseMessages.Auth.ResendEmail_Sent);
         }

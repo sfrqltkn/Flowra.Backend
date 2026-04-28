@@ -28,13 +28,13 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.Login
 
             user.ThrowIfNull(ResponseMessages.Auth.Login_UserNotFound);
 
+            user!.IsActive.ThrowIfFalse(ResponseMessages.Auth.Login_Inactive);
+            user.EmailConfirmed.ThrowIfFalse(ResponseMessages.Auth.Login_EmailNotConfirmed);
+
             var signIn = await _userService.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
 
             signIn.IsLockedOut.ThrowIfTrue(ResponseMessages.Auth.Login_Locked);
             signIn.Succeeded.ThrowIfFalse(ResponseMessages.Auth.Login_InvalidCredentials);
-
-            user!.IsActive.ThrowIfFalse(ResponseMessages.Auth.Login_Inactive);
-            user.EmailConfirmed.ThrowIfFalse(ResponseMessages.Auth.Login_EmailNotConfirmed);
 
             if (user.NeedPasswordReset)
             {

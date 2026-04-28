@@ -5,7 +5,7 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
 {
     public class ResendConfirmationEmailCommandRequest : IRequest<SuccessDetails>
     {
-        public string Email { get; set; } = string.Empty;
+        public string EmailOrUsername { get; set; } = string.Empty;
 
     }
 }
