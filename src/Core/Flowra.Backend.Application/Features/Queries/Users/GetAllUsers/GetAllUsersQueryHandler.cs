@@ -26,6 +26,7 @@ namespace Flowra.Backend.Application.Features.Queries.Users.GetAllUsers
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 IsActive = u.IsActive,
+                PhoneNumber =u.PhoneNumber!,
                 Roles = u.UserRoles.Select(ur => ur.Role.Name!).ToList()
             }).ToList();
 

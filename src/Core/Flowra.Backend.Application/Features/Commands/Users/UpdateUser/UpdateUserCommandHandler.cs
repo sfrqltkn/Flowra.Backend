@@ -1,7 +1,7 @@
 ﻿
 using Flowra.Backend.Application.Abstractions.Infrastructure;
-using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Application.Common.Responses;
+using Flowra.Backend.Application.Extensions;
 using Flowra.Backend.Application.SystemMessages;
 using MediatR;
 
@@ -19,35 +19,22 @@ namespace Flowra.Backend.Application.Features.Commands.Users.UpdateUser
         public async Task<SuccessDetails> Handle(UpdateUserCommandRequest request, CancellationToken cancellationToken)
         {
             var user = await _userService.FindByIdAsync(request.Id.ToString());
-            if (user is null)
-                throw new NotFoundException("Güncellenmek istenen kullanıcı sistemde bulunamadı.");
+            user.ThrowIfNull(ResponseMessages.User.Update_NotFound);
 
-            //if (user.Email != request.Email)
-            //{
-            //    var emailExists = await _userService.FindByEmailAsync(request.Email);
-            //    if (emailExists is not null)
-            //        throw new ConflictException("Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.", nameof(request.Email));
-            //}
-
-            //if (user.UserName != request.UserName)
-            //{
-            //    var userNameExists = await _userService.FindByNameAsync(request.UserName);
-            //    if (userNameExists is not null)
-            //        throw new ConflictException("Bu kullanıcı adı başka bir kullanıcı tarafından kullanılıyor.", nameof(request.UserName));
-            //}
+            if (!string.IsNullOrWhiteSpace(request.Email) && request.Email != user.Email)
+            {
+                var owner = await _userService.FindByEmailAsync(request.Email);
+                owner.ThrowIfExists(ResponseMessages.User.Create_EmailAlreadyExists);
+                user.Email = request.Email;
+            }
 
             user.UserName = request.UserName;
-            user.Email = request.Email;
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
+            user.FirstName = request.FirstName?.Trim() ?? user.FirstName;
+            user.LastName = request.LastName?.Trim() ?? user.LastName;
+            user.PhoneNumber = request.PhoneNumber?.Trim() ?? user.PhoneNumber;
 
             var result = await _userService.UpdateAsync(user);
-
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                throw new OperationFailedException($"Kullanıcı güncellenirken hata meydana geldi: {errors}");
-            }
+            result.ThrowIfFailed(ResponseMessages.User.Update_IdentityFailed);
 
             return ResultResponse.Success(ResponseMessages.Common.OperationSuccess);
         }
