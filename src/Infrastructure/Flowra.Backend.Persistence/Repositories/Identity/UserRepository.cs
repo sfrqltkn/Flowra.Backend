@@ -17,6 +17,9 @@ namespace Flowra.Backend.Persistence.Repositories.Identity
         public async Task<IList<User>> GetAllUsersAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Users
+                   .Include(u => u.UserRoles)
+                   .ThenInclude(ur => ur.Role)
+                   .AsSplitQuery()
                    .AsNoTracking()
                    .ToListAsync(cancellationToken);
         }
