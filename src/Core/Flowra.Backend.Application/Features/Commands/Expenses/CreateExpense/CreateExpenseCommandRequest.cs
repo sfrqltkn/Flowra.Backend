@@ -1,6 +1,9 @@
-﻿namespace Flowra.Backend.Application.DTOs.Expense
+﻿using Flowra.Backend.Application.Common.Responses;
+using MediatR;
+
+namespace Flowra.Backend.Application.Features.Commands.Expenses.CreateExpense
 {
-    public class CreateExpenseDto
+    public class CreateExpenseCommandRequest : IRequest<SuccessDetails<int>>
     {
         public string Name { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }

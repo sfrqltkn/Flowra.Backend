@@ -1,11 +1,28 @@
 ﻿namespace Flowra.Backend.Domain.Common
 {
-   public abstract class BaseEntity<TId> : IEquatable<BaseEntity<TId>> where TId : notnull
+    public abstract class BaseEntity<TId> : IEquatable<BaseEntity<TId>>, ISoftDelete
     {
+        // Identity (ID Yönetimi)
+
         public TId Id { get; protected set; } = default!;
 
-        public bool IsTransient =>
-            EqualityComparer<TId>.Default.Equals(Id, default!);
+        public bool IsTransient => EqualityComparer<TId>.Default.Equals(Id, default!);
+
+        // Soft Delete (Silinme Yönetimi)
+        public bool IsDeleted { get; private set; }
+        public DateTime? DeletedAtUtc { get; private set; }
+
+        public void MarkAsDeleted(DateTime? deletedAtUtc = null)
+        { if (!IsDeleted) { IsDeleted = true; DeletedAtUtc = deletedAtUtc ?? DateTime.UtcNow; } }
+
+        public void Restore()
+        { IsDeleted = false; DeletedAtUtc = null; }
+
+
+        // Equality Checks (Eşitlik Kontrolleri)
+
+        public override bool Equals(object? obj)
+            => Equals(obj as BaseEntity<TId>);
 
         public bool Equals(BaseEntity<TId>? other)
         {
@@ -23,30 +40,5 @@
 
             return EqualityComparer<TId>.Default.Equals(Id, other.Id);
         }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not BaseEntity<TId> other)
-                return false;
-
-            return Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            if (IsTransient)
-                return base.GetHashCode();
-
-            return EqualityComparer<TId>.Default.GetHashCode(Id);
-        }
-
-        public static bool operator ==(BaseEntity<TId>? left, BaseEntity<TId>? right)
-            => Equals(left, right);
-
-        public static bool operator !=(BaseEntity<TId>? left, BaseEntity<TId>? right)
-            => !Equals(left, right);
-
-        public override string ToString()
-            => $"{GetType().Name} [Id={Id}]";
     }
 }

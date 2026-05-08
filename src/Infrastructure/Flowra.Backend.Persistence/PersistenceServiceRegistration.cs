@@ -1,6 +1,5 @@
 ﻿using Flowra.Backend.Application.Abstractions.Persistence;
 using Flowra.Backend.Application.Abstractions.Persistence.Repositories.Identity;
-using Flowra.Backend.Application.Persistence.Repositories;
 using Flowra.Backend.Persistence.Main;
 using Flowra.Backend.Persistence.Main.UnitOfWork;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +31,7 @@ namespace Flowra.Backend.Persistence
             services.AddScoped<IUserRolesRepository, UserRolesRepository>();
 
             // Repositories
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             return services;
         }

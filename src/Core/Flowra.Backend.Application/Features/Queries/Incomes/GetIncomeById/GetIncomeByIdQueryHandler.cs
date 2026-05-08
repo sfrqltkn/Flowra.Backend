@@ -1,7 +1,7 @@
-﻿using Flowra.Backend.Application.Common.Responses;
+﻿using Flowra.Backend.Application.Abstractions.Persistence;
+using Flowra.Backend.Application.Common.Responses;
 using Flowra.Backend.Application.DTOs.Income;
 using Flowra.Backend.Application.Extensions;
-using Flowra.Backend.Application.Persistence.Repositories;
 using Flowra.Backend.Domain.Entities;
 using MediatR;
 
@@ -9,16 +9,18 @@ namespace Flowra.Backend.Application.Features.Queries.Incomes.GetIncomeById
 {
     public class GetIncomeByIdQueryHandler : IRequestHandler<GetIncomeByIdQueryRequest, SuccessDetails<IncomeDto>>
     {
-        private readonly IGenericRepository<Income> _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetIncomeByIdQueryHandler(IGenericRepository<Income> repository)
+        public GetIncomeByIdQueryHandler(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<SuccessDetails<IncomeDto>> Handle(GetIncomeByIdQueryRequest request, CancellationToken cancellationToken)
         {
-            var income = await _repository.GetByIdAsync(request.Id);
+            var readRepository = _unitOfWork.ReadRepository<Income, int>();
+
+            var income = await readRepository.GetByIdAsync(request.Id, cancellationToken);
 
             income.ThrowIfNull("Getirilmek istenen gelir kaydı bulunamadı.");
 

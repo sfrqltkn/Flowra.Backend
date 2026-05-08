@@ -6,7 +6,7 @@
         DateTime? DeletedAt { get; }
         string? DeletedBy { get; }
 
-        void MarkAsDeleted(string deletedBy);
+        void MarkAsDeleted(DateTime? deletedAtUtc = null);
         void Restore();
     }
 }

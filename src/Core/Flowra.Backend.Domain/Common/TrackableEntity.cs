@@ -1,28 +1,22 @@
-﻿using Flowra.Backend.Domain.Absractions;
-
-namespace Flowra.Backend.Domain.Common
+﻿namespace Flowra.Backend.Domain.Common
 {
-    public abstract class TrackableEntity<TId> : BaseEntity<TId>, ITrackable where TId : notnull
+    public abstract class TrackableEntity<TId> : BaseEntity<TId>
     {
         public int? CreatedBy { get; private set; }
-        public DateTime CreatedAtUtc { get; private set; }
-
+        public DateTime? CreatedAtUtc { get; private set; }
         public int? UpdatedBy { get; private set; }
         public DateTime? UpdatedAtUtc { get; private set; }
 
-        public void SetCreated(int? userId, DateTime createdAtUtc)
+        public void SetCreated(int? userId, DateTime? createdAtUtc = null)
         {
-            if (CreatedAtUtc != default)
-                throw new InvalidOperationException("Created information already set.");
-
             CreatedBy = userId;
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = createdAtUtc ?? DateTime.UtcNow;
         }
 
-        public void SetUpdated(int? userId, DateTime updatedAtUtc)
+        public void SetUpdated(int? userId, DateTime? updatedAtUtc = null)
         {
             UpdatedBy = userId;
-            UpdatedAtUtc = updatedAtUtc;
+            UpdatedAtUtc = updatedAtUtc ?? DateTime.UtcNow;
         }
     }
 }

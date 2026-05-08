@@ -1,61 +1,65 @@
-﻿using Flowra.Backend.Application.DTOs.Expense;
-using Flowra.Backend.Application.Services;
+﻿using Flowra.Backend.Application.Features.Commands.Expenses.CreateExpense;
+using Flowra.Backend.Application.Features.Commands.Expenses.DeleteExpense;
+using Flowra.Backend.Application.Features.Commands.Expenses.UpdateExpense;
+using Flowra.Backend.Application.Features.Queries.Expenses.GetAllExpenses;
+using Flowra.Backend.Application.Features.Queries.Expenses.GetExpenseById;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flowra.Backend.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Tags("Expenses")]
     public class ExpensesController : ControllerBase
     {
-        private readonly IExpenseService _expenseService;
+        private readonly IMediator _mediator;
 
-        public ExpensesController(IExpenseService expenseService)
+        public ExpensesController(IMediator mediator)
         {
-            _expenseService = expenseService;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllExpensesQueryRequest request, CancellationToken cancellationToken)
         {
-            var expenses = await _expenseService.GetAllExpensesAsync();
-            return Ok(expenses);
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateExpenseDto dto) // Parametre DTO oldu
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _expenseService.AddExpenseAsync(dto);
-            return Ok(new { message = "Gider başarıyla eklendi." });
+            var request = new GetExpenseByIdQueryRequest { Id = id };
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateExpenseDto dto) // Parametre DTO oldu
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] CreateExpenseCommandRequest request, CancellationToken cancellationToken)
         {
-            if (id != dto.Id)
-                return BadRequest("URL'deki ID ile gönderilen ID uyuşmuyor.");
-
-            try
-            {
-                await _expenseService.UpdateExpenseAsync(dto);
-                return Ok(new { message = "Gider başarıyla güncellendi." });
-            }
-            catch (Exception ex)
-            {
-                // Servisten fırlatılan "bulunamadı" hatasını yakala
-                return NotFound(ex.Message);
-            }
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateExpenseCommandRequest request, CancellationToken cancellationToken)
         {
-            await _expenseService.DeleteExpenseAsync(id);
-            return Ok(new { message = "Gider başarıyla silindi." });
+            if (id != request.Id)
+                return BadRequest("URL'deki ID ile gönderilen veri ID'si uyuşmuyor.");
+
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id:int}/delete")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var request = new DeleteExpenseCommandRequest { Id = id };
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
         }
     }
 }

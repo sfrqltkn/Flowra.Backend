@@ -1,6 +1,9 @@
-﻿namespace Flowra.Backend.Application.DTOs.Expense
+﻿using Flowra.Backend.Application.Common.Responses;
+using MediatR;
+
+namespace Flowra.Backend.Application.Features.Commands.Expenses.UpdateExpense
 {
-    public class UpdateExpenseDto
+    public class UpdateExpenseCommandRequest : IRequest<SuccessDetails>
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

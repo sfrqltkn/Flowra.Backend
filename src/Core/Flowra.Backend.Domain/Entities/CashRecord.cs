@@ -1,8 +1,10 @@
-﻿namespace Flowra.Backend.Domain.Entities
+﻿using Flowra.Backend.Domain.Common;
+
+namespace Flowra.Backend.Domain.Entities
 {
-    public class CashRecord : BaseEntity
+    public class CashRecord : BaseEntity<int>
     {
-        public string MonthYear { get; set; } = string.Empty; // Örn: "2026-03"
+        public string MonthYear { get; set; } = string.Empty;
         public decimal Balance { get; set; }
     }
 }

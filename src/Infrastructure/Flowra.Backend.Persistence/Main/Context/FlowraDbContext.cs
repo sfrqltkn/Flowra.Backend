@@ -22,8 +22,8 @@ namespace Flowra.Backend.Persistence.Main.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplySoftDeleteQueryFilter();
             builder.ApplyConfigurationsFromAssembly(typeof(FlowraDbContext).Assembly);
+            builder.ApplySoftDeleteQueryFilter();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Flowra.Backend.Domain.Entities
+﻿using Flowra.Backend.Domain.Common;
+
+namespace Flowra.Backend.Domain.Entities
 {
-    public class Income : BaseEntity
+    public class Income : BaseEntity<int>
     {
         public string Name { get; set; } = string.Empty;
         public decimal Amount { get; set; }

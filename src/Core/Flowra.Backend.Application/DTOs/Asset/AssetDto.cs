@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flowra.Backend.Application.DTOs.Asset
+﻿namespace Flowra.Backend.Application.DTOs.Asset
 {
-    public class CreateAssetDto
+    public class AssetDto
     {
-        public string MonthYear { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public DateTime MonthYear { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public decimal Amount { get; set; }

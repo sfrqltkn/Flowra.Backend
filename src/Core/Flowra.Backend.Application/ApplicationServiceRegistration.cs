@@ -21,10 +21,10 @@ namespace Flowra.Backend.Application
             services.AddValidatorsFromAssembly(assembly);
 
             // İş Mantığı Servisleri
-            services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<IAssetService, AssetService>();
-            services.AddScoped<ICashRecordService, CashRecordService>();
-            services.AddScoped<IAllowanceService, AllowanceService>();
+            //services.AddScoped<IExpenseService, ExpenseService>();
+            //services.AddScoped<IAssetService, AssetService>();
+            //services.AddScoped<ICashRecordService, CashRecordService>();
+            //services.AddScoped<IAllowanceService, AllowanceService>();
 
             // External API Servisleri (HttpClient)
             services.AddHttpClient<IFinanceDataService, FinanceDataService>(client =>

@@ -28,6 +28,13 @@ namespace Flowra.Backend.WebAPI.Controllers
             var result = await _mediator.Send(request, cancellationToken);
             return Ok(result);
         }
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        {
+            var request = new GetIncomeByIdQueryRequest { Id = id };
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
+        }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateIncomeCommandRequest request, CancellationToken cancellationToken)
@@ -48,13 +55,6 @@ namespace Flowra.Backend.WebAPI.Controllers
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var request = new DeleteIncomeCommandRequest { Id = id };
-            var result = await _mediator.Send(request, cancellationToken);
-            return Ok(result);
-        }
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
-        {
-            var request = new GetIncomeByIdQueryRequest { Id = id };
             var result = await _mediator.Send(request, cancellationToken);
             return Ok(result);
         }

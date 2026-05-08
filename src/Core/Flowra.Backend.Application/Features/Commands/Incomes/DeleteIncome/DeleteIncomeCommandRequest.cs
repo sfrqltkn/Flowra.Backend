@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Flowra.Backend.Application.Features.Commands.Incomes.DeleteIncome
 {
-    public class DeleteIncomeCommandRequest : IRequest<SuccessDetails<Unit>>
+    public class DeleteIncomeCommandRequest : IRequest<SuccessDetails>
     {
         public int Id { get; set; }
     }
