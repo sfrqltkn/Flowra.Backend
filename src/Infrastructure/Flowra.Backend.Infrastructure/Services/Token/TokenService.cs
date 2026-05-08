@@ -1,6 +1,7 @@
 ﻿using Flowra.Backend.Application.Abstractions.Infrastructure.Token;
 using Flowra.Backend.Application.Abstractions.Persistence;
 using Flowra.Backend.Application.Common.Exceptions;
+using Flowra.Backend.Application.Extensions;
 using Flowra.Backend.Application.SystemMessages;
 using Flowra.Backend.Domain.Identity;
 using Flowra.Backend.Infrastructure.Settings;
@@ -112,10 +113,7 @@ namespace Flowra.Backend.Infrastructure.Services.Token
         {
             var token = await _unitOfWork.ReadRepository<RefreshToken, int>().GetAsync(x => x.Token == refreshToken);
 
-            if (token == null)
-            {
-                throw new UnauthorizedException(ResponseMessages.Token.RefreshTokenInvalid);
-            }
+            token.ThrowIfNull(ResponseMessages.Token.RefreshTokenInvalid);
 
             if (!token.IsActive)
             {
@@ -184,7 +182,7 @@ namespace Flowra.Backend.Infrastructure.Services.Token
         {
             if (string.IsNullOrWhiteSpace(_jwtSettings.EncryptionKey))
             {
-                return null;
+                return null!;
             }
 
             var encryptionKey = new SymmetricSecurityKey(Convert.FromBase64String(_jwtSettings.EncryptionKey));

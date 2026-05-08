@@ -91,7 +91,7 @@ namespace Flowra.Backend.Application.Services
                 .GetProperty("parts")[0]
                 .GetProperty("text").GetString();
 
-            var result = JsonSerializer.Deserialize<AiStrategyResponseDto>(jsonText, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var result = JsonSerializer.Deserialize<AiStrategyResponseDto>(jsonText!, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return result ?? new AiStrategyResponseDto();
         }

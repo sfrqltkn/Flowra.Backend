@@ -2,6 +2,7 @@
 using Flowra.Backend.Application.Common.Exceptions;
 using Flowra.Backend.Application.Common.Responses;
 using Flowra.Backend.Application.DTOs.Roles;
+using Flowra.Backend.Application.Extensions;
 using Flowra.Backend.Application.SystemMessages;
 using MediatR;
 
@@ -20,8 +21,7 @@ namespace Flowra.Backend.Application.Features.Queries.Roles.GetRoleById
         {
             var role = await _roleService.FindByIdAsync(request.Id.ToString());
 
-            if (role is null)
-                throw new NotFoundException("Role bulunamadı.");
+            role.ThrowIfNull("Role bulunamadı.");
 
             var roleDto = new RoleDto { Id = role.Id, Name = role.Name! };
 

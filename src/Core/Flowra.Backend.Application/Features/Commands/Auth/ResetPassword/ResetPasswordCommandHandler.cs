@@ -13,7 +13,7 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResetPassword
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
 
-        public ResetPasswordCommandHandler(IUserService userService, ITokenService tokenService = null)
+        public ResetPasswordCommandHandler(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
             _tokenService = tokenService;

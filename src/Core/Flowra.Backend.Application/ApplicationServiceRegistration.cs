@@ -1,8 +1,6 @@
 ﻿using Flowra.Backend.Application.Common.Behaviors;
 using Flowra.Backend.Application.Services;
 using FluentValidation;
-using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -10,7 +8,7 @@ namespace Flowra.Backend.Application
 {
     public static class ApplicationServiceRegistration
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             var assembly = typeof(ApplicationServiceRegistration).Assembly;
 
@@ -24,7 +22,6 @@ namespace Flowra.Backend.Application
 
             // İş Mantığı Servisleri
             services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<IIncomeService, IncomeService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ICashRecordService, CashRecordService>();
             services.AddScoped<IAllowanceService, AllowanceService>();
