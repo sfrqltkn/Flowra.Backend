@@ -3,7 +3,6 @@ using Flowra.Backend.Infrastructure;
 using Flowra.Backend.Persistence;
 using Flowra.Backend.Persistence.Main;
 using Flowra.Backend.WebAPI;
-using Flowra.Backend.WebAPI.Filters;
 using Flowra.Backend.WebAPI.Middlewares;
 using Scalar.AspNetCore;
 
@@ -24,7 +23,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddPresentationServices(builder.Configuration);
 

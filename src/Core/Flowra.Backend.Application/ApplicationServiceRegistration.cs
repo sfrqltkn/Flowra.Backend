@@ -1,14 +1,14 @@
 ﻿using Flowra.Backend.Application.Common.Behaviors;
 using Flowra.Backend.Application.Services;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 
 namespace Flowra.Backend.Application
 {
     public static class ApplicationServiceRegistration
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             var assembly = typeof(ApplicationServiceRegistration).Assembly;
 
@@ -20,17 +20,15 @@ namespace Flowra.Backend.Application
 
             services.AddValidatorsFromAssembly(assembly);
 
-            // İş Mantığı Servisleri
-            //services.AddScoped<IExpenseService, ExpenseService>();
-            //services.AddScoped<IAssetService, AssetService>();
-            //services.AddScoped<ICashRecordService, CashRecordService>();
-            //services.AddScoped<IAllowanceService, AllowanceService>();
-
-            // External API Servisleri (HttpClient)
-            services.AddHttpClient<IFinanceDataService, FinanceDataService>(client =>
+            services.AddHttpClient("CollectApi", client =>
             {
-                client.BaseAddress = new Uri("https://api.collectapi.com/");
+                var baseUrl = configuration["CollectApi:BaseUrl"];
+                var apiKey = configuration["CollectApi:ApiKey"];
+                client.BaseAddress = new Uri(baseUrl!);
+
+                client.DefaultRequestHeaders.Add("authorization", apiKey);
             });
+
             services.AddHttpClient<IAiAdvisorService, AiAdvisorService>();
 
             return services;

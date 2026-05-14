@@ -18,7 +18,7 @@ namespace Flowra.Backend.Application.Features.Commands.Auth.ResendConfirmationEm
         public ResendConfirmationEmailCommandValidator()
         {
             RuleFor(x => x.EmailOrUsername)
-         .NotEmpty().WithMessage("E-posta veya Kullanıcı adı zorunludur.");
+            .NotEmpty().WithMessage("E-posta veya Kullanıcı adı zorunludur.");
             When(x => !string.IsNullOrEmpty(x.EmailOrUsername) && x.EmailOrUsername.Contains("@"), () =>
             {
                 RuleFor(x => x.EmailOrUsername)

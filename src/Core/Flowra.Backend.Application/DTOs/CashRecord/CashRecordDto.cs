@@ -1,6 +1,6 @@
 ﻿namespace Flowra.Backend.Application.DTOs.CashRecord
 {
-    public class UpdateCashRecordDto
+    public class CashRecordDto
     {
         public int Id { get; set; }
         public string MonthYear { get; set; } = string.Empty;
